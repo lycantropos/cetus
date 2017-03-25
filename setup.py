@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 packages = find_packages()
 setup(name='beylerbey',
-      version='0.1.0',
+      version='0.1.1',
       packages=packages,
       install_requires=[
           'SQLAlchemy>=1.0.12',
