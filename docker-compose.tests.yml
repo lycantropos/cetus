@@ -1,0 +1,22 @@
+version: '3'
+
+networks:
+  geralt:
+    external:
+      name: beylerbey_beylerbey
+
+services:
+  beylerbey:
+    build: .
+    image: lycantropos/beylerbey:latest
+    volumes:
+      - ./:/beylerbey/
+    entrypoint: python
+    command: setup.py test
+    environment:
+      MYSQL_DB_URI: mysql+pymysql://root:secret@mysql
+      POSTGRES_DB_URI: postgresql://geralt:password@postgres
+    networks:
+      - beylerbey
+    extra_hosts:
+      - "dockerhost:$DOCKERHOST"  # for debugging
