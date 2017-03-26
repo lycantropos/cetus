@@ -5,14 +5,14 @@ from beylerbey.types import (ConnectionType,
                              RecordType)
 
 
-async def execute(query: str, *,
+async def execute(query: str, *args: RecordType,
                   is_mysql: bool,
                   connection: ConnectionType) -> Union[int, str]:
     if is_mysql:
         async with connection.cursor() as cursor:
-            resp = await cursor.execute(query)
+            resp = await cursor.execute(query, args=args)
     else:
-        resp = await connection.execute(query)
+        resp = await connection.execute(query, *args)
     return resp
 
 

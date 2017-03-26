@@ -14,8 +14,9 @@ setup(name='beylerbey',
       ],
       setup_requires=['pytest-runner'],
       tests_require=['SQLAlchemy-Utils>=0.32.12',  # for database creation/cleaning
-                     'psycopg2==2.6.2',
-                     'PyMySQL==0.7.10',
+                     'psycopg2==2.6.2',  # for working with Postgres
+                     'PyMySQL==0.7.10',  # for working with MySQL
+                     'pydevd',  # debugging
                      'pytest==3.0.5',
                      'pytest-cov==2.4.0',
                      'hypothesis==3.6.1',

@@ -47,7 +47,7 @@ async def generate_mysql_insert_query(*, table_name: str,
                       for ind in range(columns_count))
     return (f'INSERT INTO {table_name} ({columns}) '
             f'VALUES ({labels}) '
-            f'ON DUPLICATE KEY UPDATE {updates}')
+            f'ON DUPLICATE KEY UPDATE {updates} ')
 
 
 async def generate_postgres_insert_query(*, table_name: str,
@@ -71,4 +71,20 @@ async def generate_postgres_insert_query(*, table_name: str,
     return (f'INSERT INTO {table_name} ({columns}) '
             f'VALUES ({labels}) '
             f'ON CONFLICT ({unique_columns}) '
-            f'DO {on_conflict_action}')
+            f'DO {on_conflict_action} ')
+
+
+async def generate_postgres_insert_returning_query(
+        *, table_name: str,
+        columns_names: List[str],
+        unique_columns_names: List[str],
+        returning_columns_names: List[str],
+        merge: bool) -> str:
+    res = await generate_postgres_insert_query(
+        table_name=table_name,
+        columns_names=columns_names,
+        unique_columns_names=unique_columns_names,
+        merge=merge)
+    returning_columns = join_str(returning_columns_names)
+    res += f'RETURNING {returning_columns}'
+    return res

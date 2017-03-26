@@ -1,6 +1,6 @@
 from functools import partial
 from typing import (Optional,
-                    List)
+                    List, Tuple)
 
 from beylerbey.queries import (ALL_COLUMNS_ALIAS,
                                generate_select_query,
@@ -8,7 +8,9 @@ from beylerbey.queries import (ALL_COLUMNS_ALIAS,
 from beylerbey.types import (ConnectionType,
                              RecordType,
                              ColumnValueType,
-                             FiltersType, OrderingType)
+                             FiltersType,
+                             OrderingType)
+
 from .utils import (normalize_pagination,
                     normalize_record)
 
@@ -163,16 +165,18 @@ async def fetch_row(query: str, *,
         return resp
 
 
-async def fetch_columns(query: str, *,
+async def fetch_columns(query: str,
+                        *args: Tuple[ColumnValueType],
                         columns_names: List[str],
                         is_mysql: bool,
-                        connection: ConnectionType) -> List[RecordType]:
+                        connection: ConnectionType
+                        ) -> List[RecordType]:
     if is_mysql:
         async with connection.cursor() as cursor:
-            await cursor.execute(query)
+            await cursor.execute(query, args=args)
             return [row async for row in cursor]
     else:
-        resp = await connection.fetch(query)
+        resp = await connection.fetch(query, *args)
         return [await normalize_record(row,
                                        columns_names=columns_names)
                 for row in resp]
