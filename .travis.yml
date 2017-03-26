@@ -1,36 +1,12 @@
-sudo: required
 services:
-  - docker
+  - mysql
+  - postgresql
 env:
-  # You may want to update this to whatever the latest version is, or keep it
-  # the same as your local machines. However, I have only tested it with 1.8.0+.
-  # There should be a time in the future when this is not necessary - it is
-  # explained in more detail below.
-  DOCKER_COMPOSE_VERSION: 1.11.2
-before_install:
-  # update is required to update the repositories to see the new packages for
-  # Docker.
-  - sudo apt-get update
-
-  # Now we can install the newer docker-engine which is required for the newer
-  # docker-composer we will install next. The messy options are to force it to
-  # be non-interactive (normally it asks you a bunch of config questions).
-  - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-engine
-
-  # As of the writing of this script Travis has docker-compose v1.4.2, we need
-  # to update it to 1.8+. $DOCKER_COMPOSE_VERSION is provide from the `env`
-  # above.
-  - sudo rm /usr/local/bin/docker-compose
-  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
-  - chmod +x docker-compose
-  - sudo mv docker-compose /usr/local/bin
-
-  # Manually stopping host MySQL and PostgreSQL services
-  # because will be using ones from containers
-  - sudo /etc/init.d/mysql stop
-  - sudo /etc/init.d/postgresql stop
-install:
-  - docker-compose -f docker-compose.db.yml -f docker-compose.tests.yml build
+  MYSQL_DB_URI: mysql+pymysql://root@localhost:3306
+  POSTGRES_DB_URI: postgresql://postgres@localhost:5432
+language: python
+python:
+  - "3.6"
 # command to run tests
 script:
-  - docker-compose -f docker-compose.db.yml -f docker-compose.tests.yml up
+  - python3.6 setup.py test
