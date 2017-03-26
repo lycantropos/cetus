@@ -12,6 +12,9 @@ before_install:
   # Docker.
   - sudo apt-get update
 
+  # Now we can install the newer docker-engine which is required for the newer
+  # docker-composer we will install next. The messy options are to force it to
+  # be non-interactive (normally it asks you a bunch of config questions).
   - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-engine
 
   # As of the writing of this script Travis has docker-compose v1.4.2, we need
@@ -26,6 +29,8 @@ before_install:
   # one we specified). This is not to be confused with the version we printed
   # before doing the update.
   - docker-compose --version
+  - sudo /etc/init.d/mysql stop
+  - sudo /etc/init.d/postgresql stop
 install:
   - docker-compose -f docker-compose.db.yml -f docker-compose.tests.yml build
 # command to run tests
