@@ -1,18 +1,17 @@
 from typing import List
 
 import pytest
-from hypothesis import strategies
-from sqlalchemy import Table
-from sqlalchemy.engine.url import URL
-
 from beylerbey.data_access import (get_connection,
                                    fetch,
                                    group_wise_fetch)
 from beylerbey.types import RecordType
-from tests.conftest import loop
+from hypothesis import strategies
+from sqlalchemy import Table
+from sqlalchemy.engine.url import URL
 from tests.utils import (sync,
+                         loop,
                          insert,
-                         records_to_dicts, loop)
+                         records_to_dicts)
 
 
 @sync

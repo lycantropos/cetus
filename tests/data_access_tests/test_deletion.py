@@ -1,15 +1,15 @@
 from typing import List
 
-from sqlalchemy import Table
-from sqlalchemy.engine.url import URL
-
 from beylerbey.data_access import (get_connection,
                                    delete)
 from beylerbey.types import RecordType
-from tests.conftest import loop
+from sqlalchemy import Table
+from sqlalchemy.engine.url import URL
 from tests.utils import (sync,
+                         loop,
                          insert,
-                         fetch, records_to_dicts, loop)
+                         fetch,
+                         records_to_dicts)
 
 
 @sync

@@ -1,11 +1,14 @@
 from typing import List
 
-from beylerbey.data_access import get_connection, insert, insert_returning
+from beylerbey.data_access import (get_connection,
+                                   insert,
+                                   insert_returning)
 from beylerbey.types import RecordType
 from sqlalchemy import Table
 from sqlalchemy.engine.url import URL
 from tests.utils import (sync,
-                         fetch, loop)
+                         loop,
+                         fetch)
 
 
 @sync
