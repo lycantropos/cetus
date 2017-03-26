@@ -6,7 +6,7 @@ from beylerbey.types import RecordType
 from sqlalchemy import Table
 from sqlalchemy.engine.url import URL
 from tests.utils import (sync,
-                         loop,
+                         event_loop,
                          insert,
                          fetch,
                          records_to_dicts)
@@ -28,7 +28,7 @@ async def test_delete(table: Table,
 
     async with get_connection(db_uri=db_uri,
                               is_mysql=is_mysql,
-                              loop=loop) as connection:
+                              loop=event_loop) as connection:
         await delete(table_name=table_name,
                      is_mysql=is_mysql,
                      connection=connection)

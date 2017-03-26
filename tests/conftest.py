@@ -9,7 +9,7 @@ from _pytest.python import Metafunc
 
 from tests.strategies.data_access import (mysql_db_uri_sample,
                                           postgres_db_uri_sample)
-from tests.utils import check_connection, loop
+from tests.utils import check_connection, event_loop
 
 base_dir = os.path.dirname(__file__)
 sys.path.append(base_dir)
@@ -42,4 +42,4 @@ def pytest_generate_tests(metafunc: Metafunc) -> None:
 def preparation(request: SubRequest) -> None:
     check_connection(mysql_db_uri_sample)
     check_connection(postgres_db_uri_sample)
-    request.addfinalizer(loop.close)
+    request.addfinalizer(event_loop.close)

@@ -18,15 +18,17 @@ from sqlalchemy import Table
 from sqlalchemy import create_engine
 from sqlalchemy.engine.url import URL
 
-loop = get_event_loop()
+event_loop = get_event_loop()
 
 
+# TODO: find a better way of running asynchronous test cases
 def sync(function: Callable[..., Coroutine]
          ) -> Callable[..., Any]:
     @wraps(function)
     def decorated(*args, **kwargs) -> Any:
         coroutine = function(*args, **kwargs)
-        res = loop.run_until_complete(ensure_future(coroutine))
+        future = ensure_future(coroutine)
+        res = event_loop.run_until_complete(future)
         return res
 
     return decorated

@@ -7,7 +7,7 @@ from beylerbey.types import RecordType
 from sqlalchemy import Table
 from sqlalchemy.engine.url import URL
 from tests.utils import (sync,
-                         loop,
+                         event_loop,
                          fetch)
 
 
@@ -23,7 +23,7 @@ async def test_insert(table: Table,
 
     async with get_connection(db_uri=db_uri,
                               is_mysql=is_mysql,
-                              loop=loop) as connection:
+                              loop=event_loop) as connection:
         await insert(table_name=table_name,
                      columns_names=table_columns_names,
                      unique_columns_names=unique_columns_names,
@@ -50,7 +50,7 @@ async def test_insert_returning(table: Table,
 
     async with get_connection(db_uri=db_uri,
                               is_mysql=is_mysql,
-                              loop=loop) as connection:
+                              loop=event_loop) as connection:
         records = await insert_returning(
             table_name=table_name,
             columns_names=table_columns_names,

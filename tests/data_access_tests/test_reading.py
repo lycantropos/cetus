@@ -9,7 +9,7 @@ from hypothesis import strategies
 from sqlalchemy import Table
 from sqlalchemy.engine.url import URL
 from tests.utils import (sync,
-                         loop,
+                         event_loop,
                          insert,
                          records_to_dicts)
 
@@ -31,7 +31,7 @@ async def test_fetch(table: Table,
 
     async with get_connection(db_uri=db_uri,
                               is_mysql=is_mysql,
-                              loop=loop) as connection:
+                              loop=event_loop) as connection:
         records = await fetch(table_name=table_name,
                               columns_names=table_columns_names,
                               is_mysql=is_mysql,
@@ -43,7 +43,7 @@ async def test_fetch(table: Table,
     with pytest.raises(ValueError):
         async with get_connection(db_uri=db_uri,
                                   is_mysql=is_mysql,
-                                  loop=loop) as connection:
+                                  loop=event_loop) as connection:
             await fetch(table_name=table_name,
                         columns_names=[],
                         is_mysql=is_mysql,
@@ -80,7 +80,7 @@ async def test_group_wise_fetch(table: Table,
 
     async with get_connection(db_uri=db_uri,
                               is_mysql=is_mysql,
-                              loop=loop) as connection:
+                              loop=event_loop) as connection:
         records = await group_wise_fetch(table_name=table_name,
                                          columns_names=table_columns_names,
                                          target_column_name=table_primary_key,
@@ -99,7 +99,7 @@ async def test_group_wise_fetch(table: Table,
     with pytest.raises(ValueError):
         async with get_connection(db_uri=db_uri,
                                   is_mysql=is_mysql,
-                                  loop=loop) as connection:
+                                  loop=event_loop) as connection:
             await group_wise_fetch(table_name=table_name,
                                    columns_names=[],
                                    target_column_name=table_primary_key,
@@ -110,7 +110,7 @@ async def test_group_wise_fetch(table: Table,
     with pytest.raises(ValueError):
         async with get_connection(db_uri=db_uri,
                                   is_mysql=is_mysql,
-                                  loop=loop) as connection:
+                                  loop=event_loop) as connection:
             await group_wise_fetch(table_name=table_name,
                                    columns_names=table_columns_names,
                                    target_column_name=table_primary_key,

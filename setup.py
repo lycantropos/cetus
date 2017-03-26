@@ -18,7 +18,7 @@ setup(name='beylerbey',
                      'PyMySQL==0.7.10',  # for working with MySQL
                      'pydevd',  # debugging
                      'pytest==3.0.5',
-                     'pytest-cov==2.4.0',
-                     'hypothesis==3.6.1',
+                     'pytest-cov>=2.4.0',
+                     'hypothesis>=3.6.1',
                      'pytz'  # working with datetime objects in hypothesis
                      ])

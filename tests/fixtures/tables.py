@@ -5,7 +5,6 @@ import pytest
 from sqlalchemy import Table
 from sqlalchemy.engine import Engine
 from tests.strategies import tables_strategy
-from tests.utils import sync
 
 
 @pytest.yield_fixture(scope='function')
@@ -22,8 +21,7 @@ def table_columns_names(table: Table) -> List[str]:
 
 
 @pytest.fixture(scope='function')
-@sync
-async def table_primary_key(table: Table) -> str:
+def table_primary_key(table: Table) -> str:
     return next(column.name
                 for column in table.columns
                 if column.primary_key)
