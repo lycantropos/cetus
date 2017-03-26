@@ -1,18 +1,16 @@
+sudo: required
+services:
+  - docker
 env:
   # You may want to update this to whatever the latest version is, or keep it
   # the same as your local machines. However, I have only tested it with 1.8.0+.
   # There should be a time in the future when this is not necessary - it is
   # explained in more detail below.
   DOCKER_COMPOSE_VERSION: 1.11.2
-
 before_install:
   # update is required to update the repositories to see the new packages for
   # Docker.
   - sudo apt-get update
-
-  # Print out the current docker-compose version. Once this reports 1.6+ then we
-  # do not need the following steps.
-  - docker-compose --version
 
   # As of the writing of this script Travis has docker-compose v1.4.2, we need
   # to update it to 1.8+. $DOCKER_COMPOSE_VERSION is provide from the `env`
