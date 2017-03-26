@@ -25,10 +25,8 @@ before_install:
   - chmod +x docker-compose
   - sudo mv docker-compose /usr/local/bin
 
-  # Check that docker-compose is now running the latest version (or at least the
-  # one we specified). This is not to be confused with the version we printed
-  # before doing the update.
-  - docker-compose --version
+  # Manually stopping host MySQL and PostgreSQL services
+  # because will be using ones from containers
   - sudo /etc/init.d/mysql stop
   - sudo /etc/init.d/postgresql stop
 install:

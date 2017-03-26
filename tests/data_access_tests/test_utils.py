@@ -1,9 +1,8 @@
-import hypothesis
-from hypothesis import strategies
-from hypothesis.searchstrategy import SearchStrategy
-
+import pytest
 from beylerbey.data_access import is_db_uri_mysql
 from beylerbey.data_access.utils import MYSQL_DRIVER_NAME_PREFIX
+from hypothesis import strategies
+from hypothesis.searchstrategy import SearchStrategy
 from sqlalchemy.engine.url import URL
 from tests.utils import sync
 
@@ -25,9 +24,16 @@ non_mysql_empty_db_uri_strategy = strategies.builds(
     drivername=non_mysql_like_driver_names_strategy)
 
 
-@hypothesis.given(mysql_empty_db_uri=mysql_empty_db_uri_strategy,
-                  non_mysql_empty_db_uri=non_mysql_empty_db_uri_strategy)
-@hypothesis.settings(perform_health_check=False)
+@pytest.fixture(scope='function')
+def mysql_empty_db_uri() -> URL:
+    return mysql_empty_db_uri_strategy.example()
+
+
+@pytest.fixture(scope='function')
+def non_mysql_empty_db_uri() -> URL:
+    return non_mysql_empty_db_uri_strategy.example()
+
+
 @sync
 async def test_is_db_uri_mysql(mysql_empty_db_uri: URL,
                                non_mysql_empty_db_uri: URL) -> None:
