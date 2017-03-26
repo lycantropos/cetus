@@ -1,10 +1,7 @@
 from datetime import datetime
 from typing import Tuple
 
-import hypothesis
 import pytest
-from hypothesis import strategies
-
 from beylerbey.queries.filters import (LOGICAL_OPERATORS,
                                        PREDICATES,
                                        INCLUSION_OPERATORS,
@@ -15,6 +12,7 @@ from beylerbey.queries.filters import (LOGICAL_OPERATORS,
 from beylerbey.types import (ColumnValueType,
                              FiltersType,
                              FilterType)
+from hypothesis import strategies
 from tests.strategies import (date_times_strategy,
                               predicates_strategy,
                               filters_strategy)
@@ -32,7 +30,11 @@ values_strategy = strategies.one_of(strategies.none(),
                                     date_times_strategy)
 
 
-@hypothesis.given(value=values_strategy)
+@pytest.fixture(scope='function')
+def value() -> ColumnValueType:
+    return values_strategy.example()
+
+
 def test_normalize_value(value: ColumnValueType) -> None:
     normalized_value = normalize_value(value)
 
@@ -44,7 +46,11 @@ def test_normalize_value(value: ColumnValueType) -> None:
         assert normalized_value == str(value)
 
 
-@hypothesis.given(predicate=predicates_strategy)
+@pytest.fixture(scope='function')
+def predicate() -> Tuple[str, FilterType]:
+    return predicates_strategy.example()
+
+
 @sync
 async def test_predicate_to_str(predicate: Tuple[str, FilterType]) -> None:
     predicate_name, filter_ = predicate
@@ -60,9 +66,16 @@ async def test_predicate_to_str(predicate: Tuple[str, FilterType]) -> None:
             assert normalized_sub_value in predicate_str
 
 
-@hypothesis.given(filters=filters_strategy,
-                  invalid_filters=invalid_filters_strategy)
-@hypothesis.settings(perform_health_check=False)
+@pytest.fixture(scope='function')
+def filters() -> FiltersType:
+    return filters_strategy.example()
+
+
+@pytest.fixture(scope='function')
+def invalid_filters() -> FiltersType:
+    return invalid_filters_strategy.example()
+
+
 @sync
 async def test_filters_to_str(filters: FiltersType,
                               invalid_filters: FiltersType):
