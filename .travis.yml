@@ -1,0 +1,12 @@
+services:
+  - mysql
+  - postgresql
+env:
+  MYSQL_DB_URI: mysql+pymysql://root@localhost:3306
+  POSTGRES_DB_URI: postgresql://postgres@localhost:5432
+language: python
+python:
+  - "3.6"
+# command to run tests
+script:
+  - python3.6 setup.py test
