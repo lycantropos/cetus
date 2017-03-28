@@ -92,6 +92,9 @@ async def generate_mysql_group_wise_query(
              f'FROM {table_name} ')
     query = await add_filters(query,
                               filters=filters)
+    query = await add_pagination(query,
+                                 limit=limit,
+                                 offset=offset)
     query += f'GROUP BY {groupings} '
     query = (f'SELECT {columns} '
              f'FROM {table_name} '
@@ -99,9 +102,6 @@ async def generate_mysql_group_wise_query(
              f'USING ({groupings}, {target_column_name}) ')
     query = await add_orderings(query,
                                 orderings=orderings)
-    query = await add_pagination(query,
-                                 limit=limit,
-                                 offset=offset)
     return query
 
 
