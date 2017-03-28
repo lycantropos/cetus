@@ -1,6 +1,6 @@
 from typing import List
 
-from beylerbey.utils import join_str
+from cetus.utils import join_str
 from .utils import check_query_parameters
 
 # does nothing, added for symmetry with `asyncpg` version

@@ -1,25 +1,26 @@
+from asyncio import AbstractEventLoop
 from typing import List
 
 import pytest
-from beylerbey.data_access import (get_connection,
-                                   fetch,
-                                   group_wise_fetch)
-from beylerbey.types import RecordType
+from cetus.data_access import (get_connection,
+                               fetch,
+                               group_wise_fetch)
+from cetus.types import RecordType
 from hypothesis import strategies
 from sqlalchemy import Table
 from sqlalchemy.engine.url import URL
-from tests.utils import (sync,
-                         event_loop,
-                         insert,
+from tests.utils import (insert,
                          records_to_dicts)
 
 
-@sync
+@pytest.mark.async
 async def test_fetch(table: Table,
                      table_columns_names: List[str],
                      table_records: List[RecordType],
                      is_mysql: bool,
-                     db_uri: URL) -> None:
+                     db_uri: URL,
+                     event_loop: AbstractEventLoop
+                     ) -> None:
     table_name = table.name
 
     table_records_dicts = await records_to_dicts(
@@ -55,14 +56,16 @@ def is_group_wise_maximum():
     return strategies.booleans().example()
 
 
-@sync
+@pytest.mark.async
 async def test_group_wise_fetch(table: Table,
                                 table_columns_names: List[str],
                                 table_primary_key: str,
                                 table_similar_records: List[RecordType],
                                 is_group_wise_maximum: bool,
                                 is_mysql: bool,
-                                db_uri: URL) -> None:
+                                db_uri: URL,
+                                event_loop: AbstractEventLoop
+                                ) -> None:
     table_name = table.name
     non_unique_columns_names = [column.name
                                 for column in table.columns

@@ -9,7 +9,7 @@ from hypothesis import strategies
 from hypothesis.extra.datetime import datetimes
 from sqlalchemy import MetaData
 
-from beylerbey.utils import MAX_IDENTIFIER_LENGTH
+from cetus.utils import MAX_IDENTIFIER_LENGTH
 
 MIN_YEAR = 1970
 MIN_STRING_LENGTH = 10

@@ -1,8 +1,8 @@
 from typing import Optional
 
-from beylerbey.queries import generate_delete_query
-from beylerbey.types import (ConnectionType,
-                             FiltersType)
+from cetus.queries import generate_delete_query
+from cetus.types import (ConnectionType,
+                         FiltersType)
 from .execution import execute
 
 

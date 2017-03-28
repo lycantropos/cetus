@@ -2,14 +2,14 @@ from functools import partial
 from typing import (Optional,
                     List, Tuple)
 
-from beylerbey.queries import (ALL_COLUMNS_ALIAS,
-                               generate_select_query,
-                               generate_group_wise_query)
-from beylerbey.types import (ConnectionType,
-                             RecordType,
-                             ColumnValueType,
-                             FiltersType,
-                             OrderingType)
+from cetus.queries import (ALL_COLUMNS_ALIAS,
+                           generate_select_query,
+                           generate_group_wise_query)
+from cetus.types import (ConnectionType,
+                         RecordType,
+                         ColumnValueType,
+                         FiltersType,
+                         OrderingType)
 
 from .utils import (normalize_pagination,
                     normalize_record)

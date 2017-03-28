@@ -1,6 +1,6 @@
 from typing import Optional
 
-from beylerbey.types import FiltersType
+from cetus.types import FiltersType
 from .filters import filters_to_str
 
 

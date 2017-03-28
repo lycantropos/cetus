@@ -1,22 +1,25 @@
+from asyncio import AbstractEventLoop
 from typing import List
 
-from beylerbey.data_access import (get_connection,
-                                   delete)
-from beylerbey.types import RecordType
+import pytest
 from sqlalchemy import Table
 from sqlalchemy.engine.url import URL
-from tests.utils import (sync,
-                         event_loop,
-                         insert,
+
+from cetus.data_access import (get_connection,
+                               delete)
+from cetus.types import RecordType
+from tests.utils import (insert,
                          fetch,
                          records_to_dicts)
 
 
-@sync
+@pytest.mark.async
 async def test_delete(table: Table,
                       table_records: List[RecordType],
                       is_mysql: bool,
-                      db_uri: URL) -> None:
+                      db_uri: URL,
+                      event_loop: AbstractEventLoop
+                      ) -> None:
     table_name = table.name
 
     table_records_dicts = await records_to_dicts(

@@ -1,23 +1,26 @@
+from asyncio import AbstractEventLoop
 from typing import List
 
-from beylerbey.data_access import (get_connection,
-                                   insert,
-                                   insert_returning)
-from beylerbey.types import RecordType
+import pytest
+
+from cetus.data_access import (get_connection,
+                               insert,
+                               insert_returning)
+from cetus.types import RecordType
 from sqlalchemy import Table
 from sqlalchemy.engine.url import URL
-from tests.utils import (sync,
-                         event_loop,
-                         fetch)
+from tests.utils import fetch
 
 
-@sync
+@pytest.mark.asyncio
 async def test_insert(table: Table,
                       table_columns_names: List[str],
                       table_primary_key: str,
                       table_records: List[RecordType],
                       is_mysql: bool,
-                      db_uri: URL) -> None:
+                      db_uri: URL,
+                      event_loop: AbstractEventLoop
+                      ) -> None:
     table_name = table.name
     unique_columns_names = [table_primary_key]
 
@@ -38,13 +41,15 @@ async def test_insert(table: Table,
                for table_record in table_records)
 
 
-@sync
+@pytest.mark.asyncio
 async def test_insert_returning(table: Table,
                                 table_columns_names: List[str],
                                 table_primary_key: str,
                                 table_records: List[RecordType],
                                 is_mysql: bool,
-                                db_uri: URL) -> None:
+                                db_uri: URL,
+                                event_loop: AbstractEventLoop
+                                ) -> None:
     table_name = table.name
     unique_columns_names = [table_primary_key]
 

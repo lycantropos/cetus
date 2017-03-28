@@ -1,3 +1,4 @@
+from asyncio import AbstractEventLoop, ensure_future
 from typing import Generator
 
 import pytest
@@ -6,10 +7,9 @@ from sqlalchemy.engine.url import URL
 from sqlalchemy_utils import (create_database,
                               drop_database)
 
-from beylerbey.data_access import is_db_uri_mysql
+from cetus.data_access import is_db_uri_mysql
 from tests.strategies import db_uris_strategy
-from tests.utils import (sync,
-                         get_engine)
+from tests.utils import get_engine
 
 
 @pytest.yield_fixture(scope='function')
@@ -27,6 +27,9 @@ def engine(db_uri: URL) -> Generator[Engine, None, None]:
 
 
 @pytest.fixture(scope='function')
-@sync
-async def is_mysql(db_uri: URL) -> bool:
-    return await is_db_uri_mysql(db_uri)
+def is_mysql(db_uri: URL,
+             event_loop: AbstractEventLoop
+             ) -> bool:
+    future = ensure_future(is_db_uri_mysql(db_uri),
+                           loop=event_loop)
+    return event_loop.run_until_complete(future)

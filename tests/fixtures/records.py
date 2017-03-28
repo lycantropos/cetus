@@ -3,7 +3,7 @@ from typing import List
 import pytest
 from sqlalchemy import Table
 
-from beylerbey.types import RecordType
+from cetus.types import RecordType
 from tests.strategies import (generate_records,
                               generate_similar_records)
 

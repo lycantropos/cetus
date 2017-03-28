@@ -7,7 +7,7 @@ from hypothesis import strategies
 from hypothesis.searchstrategy import SearchStrategy
 from sqlalchemy import Column
 
-from beylerbey.types import RecordType
+from cetus.types import RecordType
 from .utils import values_strategies_by_python_types
 
 MAX_RECORDS_COUNT = 100

@@ -1,8 +1,8 @@
 from typing import (Union,
                     List)
 
-from beylerbey.types import (ConnectionType,
-                             RecordType)
+from cetus.types import (ConnectionType,
+                         RecordType)
 
 
 async def execute(query: str, *args: RecordType,

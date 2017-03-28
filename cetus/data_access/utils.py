@@ -5,8 +5,8 @@ from typing import (Optional,
 
 from sqlalchemy.engine.url import URL
 
-from beylerbey.types import (RecordType,
-                             ColumnValueType)
+from cetus.types import (RecordType,
+                         ColumnValueType)
 
 MYSQL_DRIVER_NAME_PREFIX = 'mysql'
 # to make pagination without limit

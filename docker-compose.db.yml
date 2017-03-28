@@ -1,7 +1,7 @@
 version: '3'
 
 networks:
-  beylerbey:
+  cetus:
 
 services:
   postgres:
@@ -13,7 +13,7 @@ services:
       - POSTGRES_USER=geralt
       - POSTGRES_PASSWORD=password
     networks:
-      - beylerbey
+      - cetus
     ports:
       - 5432:5432
 
@@ -25,7 +25,7 @@ services:
       - ./mysql:/docker-entrypoint-initdb.d
       - mysql-data:/var/lib/mysql
     networks:
-      - beylerbey
+      - cetus
     ports:
       - 3306:3306
 

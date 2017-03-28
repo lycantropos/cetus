@@ -3,20 +3,20 @@ version: '3'
 networks:
   geralt:
     external:
-      name: beylerbey_beylerbey
+      name: cetus_cetus
 
 services:
-  beylerbey:
+  cetus:
     build: .
-    image: lycantropos/beylerbey:latest
+    image: lycantropos/cetus:latest
     volumes:
-      - ./:/beylerbey/
+      - ./:/cetus/
     entrypoint: python
     command: setup.py test
     environment:
       MYSQL_DB_URI: mysql+pymysql://root:secret@mysql
       POSTGRES_DB_URI: postgresql://geralt:password@postgres
     networks:
-      - beylerbey
+      - cetus
     extra_hosts:
       - "dockerhost:$DOCKERHOST"  # for debugging

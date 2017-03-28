@@ -1,10 +1,10 @@
 import pytest
-from beylerbey.data_access import is_db_uri_mysql
-from beylerbey.data_access.utils import MYSQL_DRIVER_NAME_PREFIX
 from hypothesis import strategies
 from hypothesis.searchstrategy import SearchStrategy
 from sqlalchemy.engine.url import URL
-from tests.utils import sync
+
+from cetus.data_access import is_db_uri_mysql
+from cetus.data_access.utils import MYSQL_DRIVER_NAME_PREFIX
 
 
 def extend_mysql_db_uri_like_strings_strategy(
@@ -34,7 +34,7 @@ def non_mysql_empty_db_uri() -> URL:
     return non_mysql_empty_db_uri_strategy.example()
 
 
-@sync
+@pytest.mark.asyncio
 async def test_is_db_uri_mysql(mysql_empty_db_uri: URL,
                                non_mysql_empty_db_uri: URL) -> None:
     assert await is_db_uri_mysql(mysql_empty_db_uri)

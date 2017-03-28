@@ -2,12 +2,12 @@ from itertools import chain
 from typing import (Optional,
                     List)
 
-from beylerbey.queries import (generate_insert_query,
-                               generate_select_query,
-                               generate_postgres_insert_returning_query)
-from beylerbey.types import (ConnectionType,
-                             RecordType,
-                             ColumnValueType)
+from cetus.queries import (generate_insert_query,
+                           generate_select_query,
+                           generate_postgres_insert_returning_query)
+from cetus.types import (ConnectionType,
+                         RecordType,
+                         ColumnValueType)
 
 from .execution import (execute_many,
                         execute)

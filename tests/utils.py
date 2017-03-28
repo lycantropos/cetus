@@ -12,8 +12,8 @@ import logging
 import time
 from sqlalchemy.exc import OperationalError
 
-from beylerbey.types import (RecordType,
-                             ColumnValueType)
+from cetus.types import (RecordType,
+                         ColumnValueType)
 from sqlalchemy import Table
 from sqlalchemy import create_engine
 from sqlalchemy.engine.url import URL

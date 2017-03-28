@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 packages = find_packages()
-setup(name='beylerbey',
+setup(name='cetus',
       version='0.2.0',
       packages=packages,
       install_requires=[
@@ -18,6 +18,7 @@ setup(name='beylerbey',
                      'PyMySQL==0.7.10',  # for working with MySQL
                      'pydevd',  # debugging
                      'pytest==3.0.5',
+                     'pytest-asyncio',
                      'pytest-cov>=2.4.0',
                      'hypothesis>=3.6.1',
                      'pytz'  # working with datetime objects in hypothesis

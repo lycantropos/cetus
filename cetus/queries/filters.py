@@ -1,9 +1,9 @@
 from datetime import datetime
 
-from beylerbey.types import (ColumnValueType,
-                             FiltersType,
-                             FilterType)
-from beylerbey.utils import join_str
+from cetus.types import (ColumnValueType,
+                         FiltersType,
+                         FilterType)
+from cetus.utils import join_str
 
 NULL_VALUE = 'NULL'
 

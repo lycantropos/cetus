@@ -2,8 +2,8 @@ from typing import (Any, Optional,
                     List, Tuple,
                     Dict)
 
-from beylerbey.types import OrderingType
-from beylerbey.utils import join_str
+from cetus.types import OrderingType
+from cetus.utils import join_str
 from .filters import filters_to_str
 
 ALL_COLUMNS_ALIAS = '*'

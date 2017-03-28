@@ -2,12 +2,12 @@ from typing import Tuple
 
 from hypothesis import strategies
 
-from beylerbey.queries.filters import (PREDICATES,
-                                       LOGICAL_OPERATORS,
-                                       INCLUSION_OPERATORS,
-                                       RANGE_OPERATORS,
-                                       COMPARISON_OPERATORS)
-from beylerbey.types import ColumnValueType
+from cetus.queries.filters import (PREDICATES,
+                                   LOGICAL_OPERATORS,
+                                   INCLUSION_OPERATORS,
+                                   RANGE_OPERATORS,
+                                   COMPARISON_OPERATORS)
+from cetus.types import ColumnValueType
 from .utils import date_times_strategy
 from tests.strategies.utils import identifiers_strategy
 

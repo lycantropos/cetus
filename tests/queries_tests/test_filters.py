@@ -2,21 +2,21 @@ from datetime import datetime
 from typing import Tuple
 
 import pytest
-from beylerbey.queries.filters import (LOGICAL_OPERATORS,
-                                       PREDICATES,
-                                       INCLUSION_OPERATORS,
-                                       RANGE_OPERATORS,
-                                       predicate_to_str,
-                                       normalize_value,
-                                       filters_to_str)
-from beylerbey.types import (ColumnValueType,
-                             FiltersType,
-                             FilterType)
 from hypothesis import strategies
+
+from cetus.queries.filters import (LOGICAL_OPERATORS,
+                                   PREDICATES,
+                                   INCLUSION_OPERATORS,
+                                   RANGE_OPERATORS,
+                                   predicate_to_str,
+                                   normalize_value,
+                                   filters_to_str)
+from cetus.types import (ColumnValueType,
+                         FiltersType,
+                         FilterType)
 from tests.strategies import (date_times_strategy,
                               predicates_strategy,
                               filters_strategy)
-from tests.utils import sync
 
 invalid_filters_strategy = strategies.tuples(
     strategies.text().filter(lambda s: s not in LOGICAL_OPERATORS | PREDICATES),
@@ -51,7 +51,7 @@ def predicate() -> Tuple[str, FilterType]:
     return predicates_strategy.example()
 
 
-@sync
+@pytest.mark.async
 async def test_predicate_to_str(predicate: Tuple[str, FilterType]) -> None:
     predicate_name, filter_ = predicate
     column_name, value = filter_
@@ -76,7 +76,7 @@ def invalid_filters() -> FiltersType:
     return invalid_filters_strategy.example()
 
 
-@sync
+@pytest.mark.async
 async def test_filters_to_str(filters: FiltersType,
                               invalid_filters: FiltersType):
     operator, filter_ = filters

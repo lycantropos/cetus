@@ -6,7 +6,7 @@ from sqlalchemy import (Table, Column,
                         BigInteger,
                         String, DateTime)
 
-from beylerbey.utils import MAX_IDENTIFIER_LENGTH
+from cetus.utils import MAX_IDENTIFIER_LENGTH
 from .utils import (MIN_STRING_LENGTH,
                     db_metadata,
                     concatenate_iterables,

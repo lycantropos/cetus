@@ -1,9 +1,9 @@
 from typing import (Any, Optional,
                     List, Tuple)
 
-from beylerbey.types import (FiltersType,
-                             OrderingType)
-from beylerbey.utils import join_str
+from cetus.types import (FiltersType,
+                         OrderingType)
+from cetus.utils import join_str
 from .utils import (ALL_COLUMNS_ALIAS,
                     ORDERS_ALIASES,
                     add_filters,
@@ -85,23 +85,18 @@ async def generate_mysql_group_wise_query(
     # based on article
     # http://mysql.rjweb.org/doc.php/groupwise_max
     columns = join_str(columns_names)
-    group_wise_orderings = await generate_group_wise_orderings(
-        groupings=groupings,
-        target_column_name=target_column_name,
-        is_maximum=is_maximum)
-    groupings_str = join_str(groupings)
-    query = (f'SELECT CONCAT({groupings_str}) != @prev AS grouping_condition, '
-             f'@prev := CONCAT({groupings_str}), '
-             f'{table_name}.{ALL_COLUMNS_ALIAS} '
+    groupings = join_str(groupings)
+    operator = 'MAX' if is_maximum else 'MIN'
+    query = (f'SELECT {groupings}, '
+             f'{operator}({target_column_name}) AS {target_column_name} '
              f'FROM {table_name} ')
     query = await add_filters(query,
                               filters=filters)
-    query = await add_orderings(query,
-                                orderings=group_wise_orderings)
+    query += f'GROUP BY {groupings} '
     query = (f'SELECT {columns} '
-             'FROM (SELECT @prev := \'\') as init '
-             f'JOIN ({query}) AS step '
-             'WHERE grouping_condition ')
+             f'FROM {table_name} '
+             f'JOIN ({query}) as subquery '
+             f'USING ({groupings}, {target_column_name}) ')
     query = await add_orderings(query,
                                 orderings=orderings)
     query = await add_pagination(query,
