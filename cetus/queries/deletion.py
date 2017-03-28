@@ -1,14 +1,12 @@
 from typing import Optional
 
+from cetus.queries.utils import add_filters
 from cetus.types import FiltersType
-from .filters import filters_to_str
 
 
 async def generate_delete_query(
         *, table_name: str,
         filters: Optional[FiltersType]) -> str:
     query = f'DELETE FROM {table_name} '
-    if filters:
-        filters_str = await filters_to_str(filters)
-        query += f'WHERE {filters_str} '
+    query = await add_filters(query, filters=filters)
     return query

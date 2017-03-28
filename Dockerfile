@@ -3,4 +3,4 @@ FROM python:3
 COPY . /cetus/
 WORKDIR /cetus/
 
-RUN python setup.py develop
+RUN python3 setup.py develop
