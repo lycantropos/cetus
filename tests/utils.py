@@ -1,37 +1,15 @@
-from asyncio import ensure_future, get_event_loop
+import logging
+import time
 from contextlib import (closing,
                         contextmanager)
-from functools import wraps
-from typing import (Any,
-                    Callable,
-                    Coroutine,
-                    List, Dict)
+from typing import List, Dict
 
-import logging
-
-import time
+from sqlalchemy import Table, create_engine
+from sqlalchemy.engine.url import URL
 from sqlalchemy.exc import OperationalError
 
 from cetus.types import (RecordType,
                          ColumnValueType)
-from sqlalchemy import Table
-from sqlalchemy import create_engine
-from sqlalchemy.engine.url import URL
-
-event_loop = get_event_loop()
-
-
-# TODO: find a better way of running asynchronous test cases
-def sync(function: Callable[..., Coroutine]
-         ) -> Callable[..., Any]:
-    @wraps(function)
-    def decorated(*args, **kwargs) -> Any:
-        coroutine = function(*args, **kwargs)
-        future = ensure_future(coroutine)
-        res = event_loop.run_until_complete(future)
-        return res
-
-    return decorated
 
 
 async def fetch(*, table: Table,

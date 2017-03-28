@@ -1,4 +1,5 @@
-from asyncio import AbstractEventLoop, ensure_future
+from asyncio import (AbstractEventLoop,
+                     ensure_future)
 from typing import Generator
 
 import pytest
