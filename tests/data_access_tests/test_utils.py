@@ -37,5 +37,7 @@ def non_mysql_empty_db_uri() -> URL:
 @pytest.mark.asyncio
 async def test_is_db_uri_mysql(mysql_empty_db_uri: URL,
                                non_mysql_empty_db_uri: URL) -> None:
-    assert await is_db_uri_mysql(mysql_empty_db_uri)
-    assert not await is_db_uri_mysql(non_mysql_empty_db_uri)
+    mysql_empty_db_uri_is_mysql = await is_db_uri_mysql(mysql_empty_db_uri)
+    assert mysql_empty_db_uri_is_mysql
+    non_mysql_empty_db_uri_is_mysql = await is_db_uri_mysql(non_mysql_empty_db_uri)
+    assert not non_mysql_empty_db_uri_is_mysql
