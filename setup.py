@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 packages = find_packages()
 setup(name='cetus',
-      version='0.2.0',
+      version='0.3.0',
       packages=packages,
       install_requires=[
           'SQLAlchemy>=1.0.12',
