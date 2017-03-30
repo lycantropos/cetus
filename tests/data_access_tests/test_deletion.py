@@ -13,7 +13,7 @@ from tests.utils import (insert,
                          records_to_dicts)
 
 
-@pytest.mark.async
+@pytest.mark.asyncio
 async def test_delete(table: Table,
                       table_records: List[RecordType],
                       is_mysql: bool,
@@ -22,12 +22,12 @@ async def test_delete(table: Table,
                       ) -> None:
     table_name = table.name
 
-    table_records_dicts = await records_to_dicts(
+    table_records_dicts = records_to_dicts(
         records=table_records,
         table=table)
-    await insert(records_dicts=table_records_dicts,
-                 table=table,
-                 db_uri=db_uri)
+    insert(records_dicts=table_records_dicts,
+           table=table,
+           db_uri=db_uri)
 
     async with get_connection(db_uri=db_uri,
                               is_mysql=is_mysql,
@@ -36,7 +36,7 @@ async def test_delete(table: Table,
                      is_mysql=is_mysql,
                      connection=connection)
 
-    records = await fetch(table=table,
-                          db_uri=db_uri)
+    records = fetch(table=table,
+                    db_uri=db_uri)
 
     assert not records

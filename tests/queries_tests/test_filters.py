@@ -51,7 +51,7 @@ def predicate() -> Tuple[str, FilterType]:
     return predicates_strategy.example()
 
 
-@pytest.mark.async
+@pytest.mark.asyncio
 async def test_predicate_to_str(predicate: Tuple[str, FilterType]) -> None:
     predicate_name, filter_ = predicate
     column_name, value = filter_
@@ -76,7 +76,7 @@ def invalid_filters() -> FiltersType:
     return invalid_filters_strategy.example()
 
 
-@pytest.mark.async
+@pytest.mark.asyncio
 async def test_filters_to_str(filters: FiltersType,
                               invalid_filters: FiltersType):
     operator, filter_ = filters

@@ -10,7 +10,7 @@ services:
       - ./postgres:/docker-entrypoint-initdb.d
       - postgres-data:/var/lib/postgresql/data
     environment:
-      - POSTGRES_USER=geralt
+      - POSTGRES_USER=cetus
       - POSTGRES_PASSWORD=password
     networks:
       - cetus

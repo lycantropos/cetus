@@ -1,7 +1,7 @@
 version: '3'
 
 networks:
-  geralt:
+  cetus:
     external:
       name: cetus_cetus
 
@@ -15,7 +15,7 @@ services:
     command: setup.py test
     environment:
       MYSQL_DB_URI: mysql+pymysql://root:secret@mysql
-      POSTGRES_DB_URI: postgresql://geralt:password@postgres
+      POSTGRES_DB_URI: postgresql://cetus:password@postgres
     networks:
       - cetus
     extra_hosts:

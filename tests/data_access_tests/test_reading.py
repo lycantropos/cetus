@@ -13,7 +13,7 @@ from tests.utils import (insert,
                          records_to_dicts)
 
 
-@pytest.mark.async
+@pytest.mark.asyncio
 async def test_fetch(table: Table,
                      table_columns_names: List[str],
                      table_records: List[RecordType],
@@ -23,12 +23,12 @@ async def test_fetch(table: Table,
                      ) -> None:
     table_name = table.name
 
-    table_records_dicts = await records_to_dicts(
+    table_records_dicts = records_to_dicts(
         records=table_records,
         table=table)
-    await insert(records_dicts=table_records_dicts,
-                 table=table,
-                 db_uri=db_uri)
+    insert(records_dicts=table_records_dicts,
+           table=table,
+           db_uri=db_uri)
 
     async with get_connection(db_uri=db_uri,
                               is_mysql=is_mysql,
@@ -56,7 +56,7 @@ def is_group_wise_maximum():
     return strategies.booleans().example()
 
 
-@pytest.mark.async
+@pytest.mark.asyncio
 async def test_group_wise_fetch(table: Table,
                                 table_columns_names: List[str],
                                 table_primary_key: str,
@@ -74,12 +74,12 @@ async def test_group_wise_fetch(table: Table,
     target_primary_key_value = target_function(record[0]
                                                for record in table_similar_records)
 
-    table_similar_records_dicts = await records_to_dicts(
+    table_similar_records_dicts = records_to_dicts(
         records=table_similar_records,
         table=table)
-    await insert(records_dicts=table_similar_records_dicts,
-                 table=table,
-                 db_uri=db_uri)
+    insert(records_dicts=table_similar_records_dicts,
+           table=table,
+           db_uri=db_uri)
 
     async with get_connection(db_uri=db_uri,
                               is_mysql=is_mysql,

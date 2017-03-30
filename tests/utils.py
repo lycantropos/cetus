@@ -12,26 +12,26 @@ from cetus.types import (RecordType,
                          ColumnValueType)
 
 
-async def fetch(*, table: Table,
-                db_uri: URL) -> List[RecordType]:
+def fetch(*, table: Table,
+          db_uri: URL) -> List[RecordType]:
     with get_engine(db_uri=db_uri) as engine:
         with closing(engine.execute(table.select())) as result_proxy:
             return list(map(tuple, result_proxy))
 
 
-async def insert(*,
-                 records_dicts: List[Dict[str, ColumnValueType]],
-                 table: Table,
-                 db_uri: URL) -> None:
+def insert(*,
+           records_dicts: List[Dict[str, ColumnValueType]],
+           table: Table,
+           db_uri: URL) -> None:
     if not records_dicts:
         return
     with get_engine(db_uri) as engine:
         engine.execute(table.insert().values(records_dicts))
 
 
-async def records_to_dicts(*, records: List[RecordType],
-                           table: Table
-                           ) -> List[Dict[str, ColumnValueType]]:
+def records_to_dicts(*, records: List[RecordType],
+                     table: Table
+                     ) -> List[Dict[str, ColumnValueType]]:
     columns_names = [column.name for column in table.columns]
     return [dict(zip(columns_names, table_record))
             for table_record in records]

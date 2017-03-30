@@ -4,7 +4,6 @@ import sys
 
 import pytest
 from _pytest.config import Parser
-from _pytest.fixtures import SubRequest
 from _pytest.python import Metafunc
 
 from tests.strategies.data_access import (mysql_db_uri_sample,

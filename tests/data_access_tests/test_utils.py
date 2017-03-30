@@ -18,7 +18,8 @@ mysql_empty_db_uri_strategy = strategies.builds(
     URL,
     drivername=strategies.just(MYSQL_DRIVER_NAME_PREFIX))
 non_mysql_like_driver_names_strategy = strategies.text(
-    alphabet=strategies.characters(blacklist_characters=set(MYSQL_DRIVER_NAME_PREFIX)))
+    alphabet=strategies.characters(
+        blacklist_characters=set(MYSQL_DRIVER_NAME_PREFIX)))
 non_mysql_empty_db_uri_strategy = strategies.builds(
     URL,
     drivername=non_mysql_like_driver_names_strategy)

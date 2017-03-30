@@ -34,8 +34,8 @@ async def test_insert(table: Table,
                      is_mysql=is_mysql,
                      connection=connection)
 
-    records = await fetch(table=table,
-                          db_uri=db_uri)
+    records = fetch(table=table,
+                    db_uri=db_uri)
 
     assert all(table_record in records
                for table_record in table_records)

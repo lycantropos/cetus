@@ -10,18 +10,18 @@ setup(name='cetus',
       author_email='azatibrakov@gmail.com',
       url='https://github.com/lycantropos/cetus',
       download_url='https://github.com/lycantropos/cetus/archive/master.tar.gz',
-      keywords=['async', 'MySQL', 'PostgreSQL'],
+      keywords=['async'],
       install_requires=[
           'sqlalchemy>=1.0.12',
           # async
-          'asyncio_extras',  # for async context managers
-          'asyncpg',  # for working with Postgres
-          'aiomysql',  # for working with MySQL
+          'asyncio_extras',  # async context managers
+          'asyncpg',  # working with Postgres
+          'aiomysql',  # working with MySQL
       ],
       setup_requires=['pytest-runner'],
-      tests_require=['sqlalchemy-utils>=0.32.12',  # for database creation/cleaning
-                     'psycopg2==2.6.2',  # for working with Postgres
-                     'PyMySQL==0.7.10',  # for working with MySQL
+      tests_require=['sqlalchemy-utils>=0.32.12',  # database creation/cleaning
+                     'psycopg2==2.6.2',  # working with Postgres
+                     'PyMySQL==0.7.10',  # working with MySQL
                      'pydevd',  # debugging
                      'pytest==3.0.5',
                      'pytest-asyncio',
