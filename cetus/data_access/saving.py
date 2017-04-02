@@ -1,5 +1,6 @@
 from itertools import chain
 from typing import (Optional,
+                    Iterable,
                     List)
 
 from cetus.queries import (generate_insert_query,
@@ -14,13 +15,14 @@ from .execution import (execute_many,
 from .reading import fetch_columns
 
 
-async def insert(*, table_name: str,
-                 columns_names: List[str],
-                 unique_columns_names: List[str],
-                 records: List[RecordType],
-                 merge: bool = False,
-                 connection: ConnectionType,
-                 is_mysql: bool) -> Optional[ColumnValueType]:
+async def insert(
+        *, table_name: str,
+        columns_names: List[str],
+        unique_columns_names: Optional[List[str]] = None,
+        records: Iterable[RecordType],
+        merge: bool = False,
+        connection: ConnectionType,
+        is_mysql: bool) -> Optional[ColumnValueType]:
     query = await generate_insert_query(
         table_name=table_name,
         columns_names=columns_names,
@@ -38,7 +40,7 @@ async def insert_returning(*, table_name: str,
                            columns_names: List[str],
                            unique_columns_names: List[str],
                            returning_columns_names: List[str],
-                           records: List[RecordType],
+                           records: Iterable[RecordType],
                            merge: bool = False,
                            connection: ConnectionType,
                            is_mysql: bool) -> Optional[ColumnValueType]:

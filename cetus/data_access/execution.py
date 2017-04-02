@@ -2,7 +2,8 @@ from functools import wraps
 from typing import (Union,
                     Callable,
                     Coroutine,
-                    List)
+                    Iterable,
+                    Tuple)
 
 from asyncpg import PostgresError
 from pymysql import Error
@@ -26,7 +27,7 @@ def handle_exceptions(function: Callable[..., Coroutine]):
 
 
 @handle_exceptions
-async def execute(query: str, *args: RecordType,
+async def execute(query: str, *args: Tuple[RecordType],
                   is_mysql: bool,
                   connection: ConnectionType) -> Union[int, str]:
     if is_mysql:
@@ -39,7 +40,7 @@ async def execute(query: str, *args: RecordType,
 
 @handle_exceptions
 async def execute_many(query: str, *,
-                       args: List[RecordType],
+                       args: Iterable[RecordType],
                        is_mysql: bool,
                        connection: ConnectionType) -> None:
     if is_mysql:
