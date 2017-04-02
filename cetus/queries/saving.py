@@ -42,8 +42,10 @@ async def generate_mysql_insert_query(
                       for ind in range(columns_count))
     res = (f'INSERT INTO {table_name} ({columns}) '
            f'VALUES ({labels}) ')
+
     if not unique_columns_names:
         return res
+
     if merge:
         updates = join_str(f'{column_name} = VALUES({column_name})'
                            for column_name in unique_columns_names)
@@ -75,7 +77,6 @@ async def generate_postgres_insert_query(
         on_conflict_action = f'UPDATE SET {updates}'
     else:
         on_conflict_action = 'NOTHING'
-
     unique_columns = join_str(unique_columns_names)
     # WARNING: in PostgreSQL you should define unique constraint
     # on all of columns passed to `ON CONFLICT`
@@ -87,9 +88,9 @@ async def generate_postgres_insert_query(
 async def generate_postgres_insert_returning_query(
         *, table_name: str,
         columns_names: List[str],
-        unique_columns_names: List[str],
+        unique_columns_names: List[str] = None,
         returning_columns_names: List[str],
-        merge: bool) -> str:
+        merge: bool = False) -> str:
     res = await generate_postgres_insert_query(
         table_name=table_name,
         columns_names=columns_names,

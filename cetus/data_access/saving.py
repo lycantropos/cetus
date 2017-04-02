@@ -36,14 +36,15 @@ async def insert(
                        connection=connection)
 
 
-async def insert_returning(*, table_name: str,
-                           columns_names: List[str],
-                           unique_columns_names: List[str],
-                           returning_columns_names: List[str],
-                           records: Iterable[RecordType],
-                           merge: bool = False,
-                           connection: ConnectionType,
-                           is_mysql: bool) -> Optional[ColumnValueType]:
+async def insert_returning(
+        *, table_name: str,
+        columns_names: List[str],
+        unique_columns_names: Optional[List[str]] = None,
+        returning_columns_names: List[str],
+        records: Iterable[RecordType],
+        merge: bool = False,
+        connection: ConnectionType,
+        is_mysql: bool) -> Optional[ColumnValueType]:
     if is_mysql:
         insert_query = await generate_insert_query(
             table_name=table_name,
