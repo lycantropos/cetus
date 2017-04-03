@@ -13,6 +13,7 @@ RANGE_OPERATORS = {'BETWEEN'}
 COMPARISON_OPERATORS = {'=', '!=',
                         '<', '>',
                         '<=', '>=',
+                        'IS', 'IS NOT',
                         'LIKE', 'NOT LIKE'}
 PREDICATES = (INCLUSION_OPERATORS
               | RANGE_OPERATORS
