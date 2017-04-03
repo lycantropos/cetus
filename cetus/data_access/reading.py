@@ -1,6 +1,6 @@
 from functools import partial
 from typing import (Optional,
-                    List, Tuple)
+                    List, Tuple, Dict)
 
 from cetus.queries import (ALL_COLUMNS_ALIAS,
                            generate_select_query,
@@ -11,8 +11,11 @@ from cetus.types import (ConnectionType,
                          FiltersType,
                          OrderingType)
 
-from .utils import (normalize_pagination,
-                    normalize_record)
+from .utils import (handle_exceptions,
+                    normalize_pagination,
+                    normalize_record,
+                    generate_table_columns_names,
+                    generate_table_columns_aliases)
 
 
 async def fetch_column_function(
@@ -98,6 +101,7 @@ group_wise_fetch_records_count = partial(group_wise_fetch_column_function,
 async def fetch(
         *, table_name: str,
         columns_names: List[str],
+        columns_aliases: Optional[Dict[str, str]] = None,
         filters: Optional[FiltersType] = None,
         orderings: Optional[List[OrderingType]] = None,
         groupings: List[str] = None,
@@ -108,6 +112,14 @@ async def fetch(
     limit, offset = await normalize_pagination(limit=limit,
                                                offset=offset,
                                                is_mysql=is_mysql)
+
+    columns_aliases = await generate_table_columns_aliases(
+        columns_names=columns_names,
+        columns_aliases=columns_aliases)
+    columns_names = await generate_table_columns_names(
+        columns_names=columns_names,
+        columns_aliases=columns_aliases)
+
     query = await generate_select_query(
         table_name=table_name,
         columns_names=columns_names,
@@ -117,16 +129,18 @@ async def fetch(
         limit=limit,
         offset=offset)
 
-    resp = await fetch_columns(query,
-                               columns_names=columns_names,
-                               is_mysql=is_mysql,
-                               connection=connection)
+    resp = await fetch_columns(
+        query,
+        columns_names=columns_aliases,
+        is_mysql=is_mysql,
+        connection=connection)
     return resp
 
 
 async def group_wise_fetch(
         *, table_name: str,
         columns_names: List[str],
+        columns_aliases: Optional[Dict[str, str]] = None,
         target_column_name: str,
         groupings: List[str],
         filters: Optional[FiltersType] = None,
@@ -136,9 +150,17 @@ async def group_wise_fetch(
         is_maximum: bool = True,
         is_mysql: bool,
         connection: ConnectionType) -> List[RecordType]:
-    limit, offset = await normalize_pagination(limit=limit,
-                                               offset=offset,
-                                               is_mysql=is_mysql)
+    limit, offset = await normalize_pagination(
+        limit=limit,
+        offset=offset,
+        is_mysql=is_mysql)
+
+    columns_aliases = await generate_table_columns_aliases(
+        columns_names=columns_names,
+        columns_aliases=columns_aliases)
+    columns_names = await generate_table_columns_names(
+        columns_names=columns_names,
+        columns_aliases=columns_aliases)
 
     query = await generate_group_wise_query(
         table_name=table_name,
@@ -153,15 +175,17 @@ async def group_wise_fetch(
         is_mysql=is_mysql)
 
     resp = await fetch_columns(query,
-                               columns_names=columns_names,
+                               columns_names=columns_aliases,
                                is_mysql=is_mysql,
                                connection=connection)
     return resp
 
 
+@handle_exceptions
 async def fetch_row(query: str, *,
                     is_mysql: bool,
-                    connection: ConnectionType) -> ColumnValueType:
+                    connection: ConnectionType
+                    ) -> ColumnValueType:
     if is_mysql:
         async with connection.cursor() as cursor:
             await cursor.execute(query)
@@ -172,6 +196,7 @@ async def fetch_row(query: str, *,
         return resp
 
 
+@handle_exceptions
 async def fetch_columns(query: str,
                         *args: Tuple[ColumnValueType],
                         columns_names: List[str],

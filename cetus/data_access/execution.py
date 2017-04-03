@@ -1,29 +1,10 @@
-from functools import wraps
 from typing import (Union,
-                    Callable,
-                    Coroutine,
                     Iterable,
                     Tuple)
 
-from asyncpg import PostgresError
-from pymysql import Error
-
+from cetus.data_access.utils import handle_exceptions
 from cetus.types import (ConnectionType,
                          RecordType)
-
-
-def handle_exceptions(function: Callable[..., Coroutine]):
-    @wraps(function)
-    async def decorated(query: str, *args, **kwargs):
-        try:
-            res = await function(query, *args, **kwargs)
-            return res
-        except (Error, PostgresError) as err:
-            err_msg = ('Error while processing '
-                       f'query: "{query}".')
-            raise IOError(err_msg) from err
-
-    return decorated
 
 
 @handle_exceptions
