@@ -54,9 +54,10 @@ fetch_records_count = partial(fetch_column_function,
 
 
 async def group_wise_fetch_column_function(
-        *, table_name: str,
-        column_name: str = ALL_COLUMNS_ALIAS,
+        *,
         column_function_name: str,
+        table_name: str,
+        column_name: str = ALL_COLUMNS_ALIAS,
         target_column_name: str,
         groupings: List[str],
         filters: Optional[FiltersType] = None,
