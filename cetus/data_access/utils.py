@@ -36,15 +36,18 @@ async def is_db_uri_mysql(db_uri: URL) -> bool:
     return backend_name == MYSQL_DRIVER_NAME_PREFIX
 
 
-async def normalize_record(record: Dict[str, ColumnValueType],
-                           columns_names: List[str]) -> RecordType:
-    return tuple(record[column_name] for column_name in columns_names)
+def normalize_record(record: Dict[str, ColumnValueType],
+                     columns_names: List[str]
+                     ) -> RecordType:
+    return tuple(record[column_name]
+                 for column_name in columns_names)
 
 
 async def normalize_pagination(*, limit: Optional[int],
                                offset: Optional[int],
                                is_mysql: bool
-                               ) -> Tuple[Optional[int], Optional[int]]:
+                               ) -> Tuple[Optional[int],
+                                          Optional[int]]:
     if is_mysql:
         if limit is None and offset is not None:
             warn_msg = ('Incorrect pagination parameters: '

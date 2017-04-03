@@ -209,9 +209,9 @@ async def fetch_columns(query: str,
             return [row async for row in cursor]
     else:
         resp = await connection.fetch(query, *args)
-        return [await normalize_record(row,
-                                       columns_names=columns_names)
-                for row in resp]
+        normalizer = partial(normalize_record,
+                             columns_names=columns_names)
+        return list(map(normalizer, resp))
 
 
 async def fetch_max_connections(*, is_mysql: bool,
