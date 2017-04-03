@@ -1,12 +1,13 @@
 import logging
 from functools import wraps
-from typing import (Optional,
+from typing import (Any,
+                    Optional,
+                    Callable,
+                    Coroutine,
                     Dict,
-                    Tuple, List, Callable, Coroutine)
+                    Tuple, List)
 
 from asyncpg import PostgresError
-from cetus.types import (RecordType,
-                         ColumnValueType)
 from pymysql import Error
 from sqlalchemy.engine.url import URL
 
@@ -17,9 +18,12 @@ MYSQL_MAX_BIGINT_VALUE = 18_446_744_073_709_551_615
 logger = logging.getLogger(__name__)
 
 
-def handle_exceptions(function: Callable[..., Coroutine]):
+def handle_exceptions(function: Callable[..., Coroutine]
+                      ) -> Callable[..., Coroutine]:
     @wraps(function)
-    async def decorated(query: str, *args, **kwargs):
+    async def decorated(query: str,
+                        *args: Tuple[Any, ...],
+                        **kwargs: Dict[str, Any]):
         try:
             res = await function(query, *args, **kwargs)
             return res
@@ -34,13 +38,6 @@ def handle_exceptions(function: Callable[..., Coroutine]):
 async def is_db_uri_mysql(db_uri: URL) -> bool:
     backend_name = db_uri.get_backend_name()
     return backend_name == MYSQL_DRIVER_NAME_PREFIX
-
-
-def normalize_record(record: Dict[str, ColumnValueType],
-                     columns_names: List[str]
-                     ) -> RecordType:
-    return tuple(record[column_name]
-                 for column_name in columns_names)
 
 
 async def normalize_pagination(*, limit: Optional[int],

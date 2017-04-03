@@ -12,7 +12,7 @@ from cetus.types import (ConnectionType,
 
 from .execution import (execute_many,
                         execute)
-from .reading import fetch_columns
+from .reading import fetch_query
 
 
 async def insert(
@@ -59,10 +59,9 @@ async def insert_returning(
                           is_mysql=is_mysql,
                           connection=connection)
         primary_key = unique_columns_names[0]
-        resp = await fetch_columns(
+        resp = await fetch_query(
             f'SELECT LAST_INSERT_ID({primary_key}) '
             f'FROM {table_name}',
-            columns_names=[],
             is_mysql=is_mysql,
             connection=connection)
         primary_key_values = [row[0] for row in resp]
@@ -70,10 +69,9 @@ async def insert_returning(
         query = await generate_select_query(table_name=table_name,
                                             columns_names=returning_columns_names,
                                             filters=filters)
-        resp = await fetch_columns(query,
-                                   columns_names=returning_columns_names,
-                                   is_mysql=is_mysql,
-                                   connection=connection)
+        resp = await fetch_query(query,
+                                 is_mysql=is_mysql,
+                                 connection=connection)
     else:
         query = await generate_postgres_insert_returning_query(
             table_name=table_name,
@@ -82,10 +80,9 @@ async def insert_returning(
             returning_columns_names=returning_columns_names,
             merge=merge)
         resp = list(chain.from_iterable(
-            [await fetch_columns(query,
-                                 *record,
-                                 columns_names=returning_columns_names,
-                                 is_mysql=is_mysql,
-                                 connection=connection)
+            [await fetch_query(query,
+                               *record,
+                               is_mysql=is_mysql,
+                               connection=connection)
              for record in records]))
     return resp

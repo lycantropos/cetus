@@ -2,15 +2,17 @@ from typing import (Union,
                     Iterable,
                     Tuple)
 
-from cetus.data_access.utils import handle_exceptions
 from cetus.types import (ConnectionType,
                          RecordType)
+from .utils import handle_exceptions
 
 
 @handle_exceptions
-async def execute(query: str, *args: Tuple[RecordType],
+async def execute(query: str,
+                  *args: Tuple[RecordType],
                   is_mysql: bool,
-                  connection: ConnectionType) -> Union[int, str]:
+                  connection: ConnectionType
+                  ) -> Union[int, str]:
     if is_mysql:
         async with connection.cursor() as cursor:
             resp = await cursor.execute(query, args=args)
@@ -23,7 +25,8 @@ async def execute(query: str, *args: Tuple[RecordType],
 async def execute_many(query: str, *,
                        args: Iterable[RecordType],
                        is_mysql: bool,
-                       connection: ConnectionType) -> None:
+                       connection: ConnectionType
+                       ) -> None:
     if is_mysql:
         async with connection.cursor() as cursor:
             await cursor.executemany(query, args=args)
