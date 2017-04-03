@@ -49,3 +49,12 @@ async def check_query_parameters(**query_parameters: Dict[str, List[str]]
                        'non-empty list of strings '
                        f'but found: "{parameter_value}".')
             raise ValueError(err_msg)
+
+
+async def add_groupings(query: str, *,
+                        groupings: Optional[List[str]] = None
+                        ) -> str:
+    if groupings:
+        groupings = join_str(groupings)
+        query += f'GROUP BY {groupings} '
+    return query

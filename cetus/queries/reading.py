@@ -4,10 +4,12 @@ from typing import (Any, Optional,
 from cetus.types import (FiltersType,
                          OrderingType)
 from cetus.utils import join_str
+
 from .utils import (ALL_COLUMNS_ALIAS,
                     ORDERS_ALIASES,
                     add_filters,
                     add_orderings,
+                    add_groupings,
                     add_pagination,
                     check_query_parameters)
 
@@ -17,6 +19,7 @@ async def generate_select_query(
         columns_names: List[str],
         filters: Optional[FiltersType] = None,
         orderings: Optional[List[OrderingType]] = None,
+        groupings: List[str] = None,
         limit: Optional[int] = None,
         offset: Optional[int] = None) -> str:
     await check_query_parameters(columns_names=columns_names)
@@ -28,6 +31,8 @@ async def generate_select_query(
                               filters=filters)
     query = await add_orderings(query,
                                 orderings=orderings)
+    query = await add_groupings(query,
+                                groupings=groupings)
     query = await add_pagination(query,
                                  limit=limit,
                                  offset=offset)
@@ -85,9 +90,9 @@ async def generate_mysql_group_wise_query(
     # based on article
     # http://mysql.rjweb.org/doc.php/groupwise_max
     columns = join_str(columns_names)
-    groupings = join_str(groupings)
+    groupings_str = join_str(groupings)
     operator = 'MAX' if is_maximum else 'MIN'
-    query = (f'SELECT {groupings}, '
+    query = (f'SELECT {groupings_str}, '
              f'{operator}({target_column_name}) AS {target_column_name} '
              f'FROM {table_name} ')
     query = await add_filters(query,
@@ -95,11 +100,12 @@ async def generate_mysql_group_wise_query(
     query = await add_pagination(query,
                                  limit=limit,
                                  offset=offset)
-    query += f'GROUP BY {groupings} '
+    query = await add_groupings(query,
+                                groupings=groupings)
     query = (f'SELECT {columns} '
              f'FROM {table_name} '
              f'JOIN ({query}) as subquery '
-             f'USING ({groupings}, {target_column_name}) ')
+             f'USING ({groupings_str}, {target_column_name}) ')
     query = await add_orderings(query,
                                 orderings=orderings)
     return query

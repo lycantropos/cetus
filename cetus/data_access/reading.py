@@ -16,16 +16,17 @@ from .utils import (normalize_pagination,
 
 
 async def fetch_column_function(
-        *, table_name: str,
+        *,
+        column_function_name: str,
+        table_name: str,
         column_name: str,
         filters: Optional[FiltersType] = None,
         orderings: Optional[List[OrderingType]] = None,
         limit: Optional[int] = None,
         offset: Optional[int] = None,
-        column_function_name: str,
         is_mysql: bool,
         connection: ConnectionType,
-        default: ColumnValueType = 0) -> int:
+        default: ColumnValueType) -> int:
     limit, offset = await normalize_pagination(limit=limit,
                                                offset=offset,
                                                is_mysql=is_mysql)
@@ -44,10 +45,12 @@ async def fetch_column_function(
 
 
 fetch_max_column_value = partial(fetch_column_function,
-                                 column_function_name='MAX')
+                                 column_function_name='MAX',
+                                 default=None)
 fetch_records_count = partial(fetch_column_function,
                               column_function_name='COUNT',
-                              column_name=ALL_COLUMNS_ALIAS)
+                              column_name=ALL_COLUMNS_ALIAS,
+                              default=0)
 
 
 async def group_wise_fetch_column_function(
@@ -91,14 +94,16 @@ group_wise_fetch_records_count = partial(group_wise_fetch_column_function,
                                          column_function_name='COUNT')
 
 
-async def fetch(*, table_name: str,
-                columns_names: List[str],
-                filters: Optional[FiltersType] = None,
-                orderings: Optional[List[OrderingType]] = None,
-                limit: Optional[int] = None,
-                offset: Optional[int] = None,
-                is_mysql: bool,
-                connection: ConnectionType) -> List[RecordType]:
+async def fetch(
+        *, table_name: str,
+        columns_names: List[str],
+        filters: Optional[FiltersType] = None,
+        orderings: Optional[List[OrderingType]] = None,
+        groupings: List[str] = None,
+        limit: Optional[int] = None,
+        offset: Optional[int] = None,
+        is_mysql: bool,
+        connection: ConnectionType) -> List[RecordType]:
     limit, offset = await normalize_pagination(limit=limit,
                                                offset=offset,
                                                is_mysql=is_mysql)
@@ -107,6 +112,7 @@ async def fetch(*, table_name: str,
         columns_names=columns_names,
         filters=filters,
         orderings=orderings,
+        groupings=groupings,
         limit=limit,
         offset=offset)
 
