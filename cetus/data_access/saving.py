@@ -12,7 +12,7 @@ from cetus.types import (ConnectionType,
 
 from .execution import (execute_many,
                         execute)
-from .reading import fetch_query
+from .reading import fetch_rows
 
 
 async def insert(
@@ -59,7 +59,7 @@ async def insert_returning(
                           is_mysql=is_mysql,
                           connection=connection)
         primary_key = unique_columns_names[0]
-        resp = await fetch_query(
+        resp = await fetch_rows(
             f'SELECT LAST_INSERT_ID({primary_key}) '
             f'FROM {table_name}',
             is_mysql=is_mysql,
@@ -69,9 +69,9 @@ async def insert_returning(
         query = await generate_select_query(table_name=table_name,
                                             columns_names=returning_columns_names,
                                             filters=filters)
-        resp = await fetch_query(query,
-                                 is_mysql=is_mysql,
-                                 connection=connection)
+        resp = await fetch_rows(query,
+                                is_mysql=is_mysql,
+                                connection=connection)
     else:
         query = await generate_postgres_insert_returning_query(
             table_name=table_name,
@@ -80,9 +80,9 @@ async def insert_returning(
             returning_columns_names=returning_columns_names,
             merge=merge)
         resp = list(chain.from_iterable(
-            [await fetch_query(query,
-                               *record,
-                               is_mysql=is_mysql,
-                               connection=connection)
+            [await fetch_rows(query,
+                              *record,
+                              is_mysql=is_mysql,
+                              connection=connection)
              for record in records]))
     return resp
