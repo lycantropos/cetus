@@ -15,13 +15,12 @@ from tests.utils import (insert,
 
 @pytest.mark.asyncio
 async def test_delete(table: Table,
+                      table_name: str,
                       table_records: List[RecordType],
                       is_mysql: bool,
                       db_uri: URL,
                       event_loop: AbstractEventLoop
                       ) -> None:
-    table_name = table.name
-
     table_records_dicts = records_to_dicts(
         records=table_records,
         table=table)

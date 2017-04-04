@@ -16,6 +16,11 @@ def table(engine: Engine) -> Generator[Table, None, None]:
 
 
 @pytest.fixture(scope='function')
+def table_name(table: Table) -> str:
+    return table.name
+
+
+@pytest.fixture(scope='function')
 def table_columns_names(table: Table) -> List[str]:
     return [column.name for column in table.columns]
 

@@ -1,6 +1,7 @@
 from functools import partial
 from typing import (Optional,
-                    List, Tuple, Dict)
+                    Tuple, List,
+                    Dict)
 
 from cetus.queries import (ALL_COLUMNS_ALIAS,
                            generate_select_query,
@@ -26,7 +27,7 @@ async def fetch_column_function(
         is_mysql: bool,
         connection: ConnectionType,
         default: ColumnValueType) -> int:
-    column_alias = f'{column_function_name}_{column_name}'
+    column_alias = f'{column_function_name}_1'
     function_column = (f'{column_function_name}({column_name}) '
                        f'AS {column_alias}')
     query = await generate_select_query(
@@ -35,13 +36,9 @@ async def fetch_column_function(
         filters=filters,
         orderings=orderings)
     resp = await fetch_row(query,
-                           column_name=column_alias,
                            is_mysql=is_mysql,
                            connection=connection)
-    res = resp[0] if resp is not None else default
-    if not is_mysql:
-        res = res[column_alias]
-    return res
+    return resp[0] if resp is not None else default
 
 
 fetch_max_column_value = partial(fetch_column_function,
@@ -65,10 +62,13 @@ async def group_wise_fetch_column_function(
         is_mysql: bool,
         connection: ConnectionType,
         default: ColumnValueType = 0) -> int:
-    function_column = f'{column_function_name}({column_name})'
+    column_alias = f'{column_function_name}_1'
+    function_column = (f'{column_function_name}({column_name}) '
+                       f'AS {column_alias}')
     query = await generate_group_wise_query(
         table_name=table_name,
         columns_names=[function_column],
+
         target_column_name=target_column_name,
         filters=filters,
         groupings=groupings,
@@ -181,7 +181,7 @@ async def fetch_row(query: str, *,
             return resp
     else:
         resp = await connection.fetchrow(query)
-        return resp
+        return tuple(resp.values())
 
 
 @handle_exceptions

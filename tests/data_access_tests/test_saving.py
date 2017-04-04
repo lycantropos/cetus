@@ -14,6 +14,7 @@ from tests.utils import fetch
 
 @pytest.mark.asyncio
 async def test_insert(table: Table,
+                      table_name: str,
                       table_columns_names: List[str],
                       table_primary_key: str,
                       table_records: List[RecordType],
@@ -21,9 +22,7 @@ async def test_insert(table: Table,
                       db_uri: URL,
                       event_loop: AbstractEventLoop
                       ) -> None:
-    table_name = table.name
     unique_columns_names = [table_primary_key]
-
     async with get_connection(db_uri=db_uri,
                               is_mysql=is_mysql,
                               loop=event_loop) as connection:
@@ -42,7 +41,7 @@ async def test_insert(table: Table,
 
 
 @pytest.mark.asyncio
-async def test_insert_returning(table: Table,
+async def test_insert_returning(table_name: str,
                                 table_columns_names: List[str],
                                 table_primary_key: str,
                                 table_records: List[RecordType],
@@ -50,7 +49,6 @@ async def test_insert_returning(table: Table,
                                 db_uri: URL,
                                 event_loop: AbstractEventLoop
                                 ) -> None:
-    table_name = table.name
     unique_columns_names = [table_primary_key]
 
     async with get_connection(db_uri=db_uri,
