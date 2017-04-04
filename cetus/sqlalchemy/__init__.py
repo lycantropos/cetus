@@ -1,1 +1,1 @@
-from .query import get_literal_query
+from .query import query_to_str

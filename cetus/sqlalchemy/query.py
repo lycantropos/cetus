@@ -40,8 +40,8 @@ class LiteralDialect(DefaultDialect):
     }
 
 
-def get_literal_query(statement_or_query: Union[ClauseElement, Query]
-                      ) -> str:
+def query_to_str(statement_or_query: Union[ClauseElement, Query]
+                 ) -> str:
     statement = get_statement(statement_or_query)
     compiled_query = statement.compile(
         dialect=LiteralDialect(),
