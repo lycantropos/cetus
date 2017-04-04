@@ -48,7 +48,8 @@ async def fetch_row(query: str, *,
             return resp
     else:
         resp = await connection.fetchrow(query)
-        return tuple(resp.values())
+        if resp is not None:
+            return tuple(resp.values())
 
 
 @handle_exceptions
