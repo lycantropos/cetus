@@ -23,26 +23,25 @@ async def fetch_column_function(
         column_name: str,
         filters: Optional[FiltersType] = None,
         orderings: Optional[List[OrderingType]] = None,
-        limit: Optional[int] = None,
-        offset: Optional[int] = None,
         is_mysql: bool,
         connection: ConnectionType,
         default: ColumnValueType) -> int:
-    limit, offset = await normalize_pagination(limit=limit,
-                                               offset=offset,
-                                               is_mysql=is_mysql)
-    function_column = f'{column_function_name}({column_name})'
+    column_alias = f'{column_function_name}_{column_name}'
+    function_column = (f'{column_function_name}({column_name}) '
+                       f'AS {column_alias}')
     query = await generate_select_query(
         table_name=table_name,
         columns_names=[function_column],
         filters=filters,
-        orderings=orderings,
-        limit=limit,
-        offset=offset)
+        orderings=orderings)
     resp = await fetch_row(query,
+                           column_name=column_alias,
                            is_mysql=is_mysql,
                            connection=connection)
-    return resp[0] if resp is not None else default
+    res = resp[0] if resp is not None else default
+    if not is_mysql:
+        res = res[column_alias]
+    return res
 
 
 fetch_max_column_value = partial(fetch_column_function,
@@ -62,16 +61,10 @@ async def group_wise_fetch_column_function(
         target_column_name: str,
         groupings: List[str],
         filters: Optional[FiltersType] = None,
-        limit: Optional[int] = None,
-        offset: Optional[int] = None,
         is_maximum: bool = True,
         is_mysql: bool,
         connection: ConnectionType,
         default: ColumnValueType = 0) -> int:
-    limit, offset = await normalize_pagination(limit=limit,
-                                               offset=offset,
-                                               is_mysql=is_mysql)
-
     function_column = f'{column_function_name}({column_name})'
     query = await generate_group_wise_query(
         table_name=table_name,
@@ -79,8 +72,6 @@ async def group_wise_fetch_column_function(
         target_column_name=target_column_name,
         filters=filters,
         groupings=groupings,
-        limit=limit,
-        offset=offset,
         is_maximum=is_maximum,
         is_mysql=is_mysql)
 
