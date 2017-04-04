@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 packages = find_packages()
 setup(name='cetus',
-      version='0.5.1',
+      version='0.6.0',
       packages=packages,
       description='asynchronous working with PostgreSQL/MySQL '
                   'based on asyncpg/aiomysql',
