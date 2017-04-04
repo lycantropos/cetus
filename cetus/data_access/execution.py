@@ -1,9 +1,11 @@
 from typing import (Union,
                     Iterable,
-                    Tuple)
+                    Tuple, List)
 
 from cetus.types import (ConnectionType,
-                         RecordType)
+                         RecordType,
+                         ColumnValueType)
+
 from .utils import handle_exceptions
 
 
@@ -32,3 +34,33 @@ async def execute_many(query: str, *,
             await cursor.executemany(query, args=args)
     else:
         await connection.executemany(query, args=args)
+
+
+@handle_exceptions
+async def fetch_row(query: str, *,
+                    is_mysql: bool,
+                    connection: ConnectionType
+                    ) -> RecordType:
+    if is_mysql:
+        async with connection.cursor() as cursor:
+            await cursor.execute(query)
+            resp = await cursor.fetchone()
+            return resp
+    else:
+        resp = await connection.fetchrow(query)
+        return tuple(resp.values())
+
+
+@handle_exceptions
+async def fetch_rows(query: str,
+                     *args: Tuple[ColumnValueType],
+                     is_mysql: bool,
+                     connection: ConnectionType
+                     ) -> List[RecordType]:
+    if is_mysql:
+        async with connection.cursor() as cursor:
+            await cursor.execute(query, args=args)
+            return [row async for row in cursor]
+    else:
+        resp = await connection.fetch(query, *args)
+        return [tuple(row.values()) for row in resp]

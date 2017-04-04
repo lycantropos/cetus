@@ -1,8 +1,10 @@
 from functools import partial
 from typing import (Optional,
-                    Tuple, List,
+                    List,
                     Dict)
 
+from .execution import (fetch_row,
+                        fetch_rows)
 from cetus.queries import (ALL_COLUMNS_ALIAS,
                            generate_select_query,
                            generate_group_wise_query)
@@ -11,8 +13,8 @@ from cetus.types import (ConnectionType,
                          ColumnValueType,
                          FiltersType,
                          OrderingType)
-from .utils import (handle_exceptions,
-                    normalize_pagination,
+
+from .utils import (normalize_pagination,
                     generate_table_columns_names,
                     generate_table_columns_aliases)
 
@@ -119,7 +121,7 @@ async def fetch(
         limit=limit,
         offset=offset)
 
-    resp = await fetch_query(
+    resp = await fetch_rows(
         query,
         is_mysql=is_mysql,
         connection=connection)
@@ -163,40 +165,10 @@ async def group_wise_fetch(
         is_maximum=is_maximum,
         is_mysql=is_mysql)
 
-    resp = await fetch_query(query,
-                             is_mysql=is_mysql,
-                             connection=connection)
+    resp = await fetch_rows(query,
+                            is_mysql=is_mysql,
+                            connection=connection)
     return resp
-
-
-@handle_exceptions
-async def fetch_row(query: str, *,
-                    is_mysql: bool,
-                    connection: ConnectionType
-                    ) -> ColumnValueType:
-    if is_mysql:
-        async with connection.cursor() as cursor:
-            await cursor.execute(query)
-            resp = await cursor.fetchone()
-            return resp
-    else:
-        resp = await connection.fetchrow(query)
-        return tuple(resp.values())
-
-
-@handle_exceptions
-async def fetch_query(query: str,
-                      *args: Tuple[ColumnValueType],
-                      is_mysql: bool,
-                      connection: ConnectionType
-                      ) -> List[RecordType]:
-    if is_mysql:
-        async with connection.cursor() as cursor:
-            await cursor.execute(query, args=args)
-            return [row async for row in cursor]
-    else:
-        resp = await connection.fetch(query, *args)
-        return [tuple(row.values()) for row in resp]
 
 
 async def fetch_max_connections(*, is_mysql: bool,
