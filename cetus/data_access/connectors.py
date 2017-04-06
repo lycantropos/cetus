@@ -1,11 +1,13 @@
 from asyncio import AbstractEventLoop
 from typing import Optional
 
-import aiomysql
+import aiomysql.sa
 import asyncpg
 from aiomysql.sa.transaction import RootTransaction
 from asyncio_extras import async_contextmanager
-from cetus.types import ConnectionType, MySQLConnectionType, PostgresConnectionType
+from cetus.types import (ConnectionType,
+                         MySQLConnectionType,
+                         PostgresConnectionType)
 from sqlalchemy.engine.url import URL
 
 DEFAULT_MYSQL_PORT = 3306
@@ -49,7 +51,10 @@ async def get_mysql_connection_pool(
         loop: AbstractEventLoop):
     # `None` port causes exceptions
     port = db_uri.port or DEFAULT_MYSQL_PORT
-    async with aiomysql.create_pool(
+    # we use engine instead of plain connection pool
+    # because `aiomysql` has transactions API
+    # only for engine-based connections
+    async with aiomysql.sa.create_engine(
             host=db_uri.host,
             port=port,
             user=db_uri.username,
@@ -62,8 +67,8 @@ async def get_mysql_connection_pool(
             autocommit=True,
             minsize=min_size,
             maxsize=max_size,
-            loop=loop) as pool:
-        yield pool
+            loop=loop) as engine:
+        yield engine
 
 
 @async_contextmanager
@@ -111,7 +116,7 @@ async def begin_mysql_transaction(
 @async_contextmanager
 async def begin_postgres_transaction(
         connection: PostgresConnectionType,
-        isolation: str = 'read_committed',
+        *, isolation: str = 'read_committed',
         read_only: bool = False,
         deferrable: bool = False):
     transaction = connection.transaction(
@@ -149,22 +154,26 @@ async def get_mysql_connection(
         loop: AbstractEventLoop):
     # `None` port causes exceptions
     port = db_uri.port or DEFAULT_MYSQL_PORT
-    connection = await aiomysql.connect(
-        host=db_uri.host,
-        port=port,
-        user=db_uri.username,
-        password=db_uri.password,
-        db=db_uri.database,
-        charset='utf8',
-        connect_timeout=timeout,
-        # TODO: check if `asyncpg` connections
-        # are autocommit by default
-        autocommit=True,
-        loop=loop)
-    try:
-        yield connection
-    finally:
-        connection.close()
+    # we use engine-based connection
+    # instead of plain connection
+    # because `aiomysql` has transactions API
+    # only for engine-based connections
+    async with aiomysql.sa.create_engine(
+            host=db_uri.host,
+            port=port,
+            user=db_uri.username,
+            password=db_uri.password,
+            db=db_uri.database,
+            charset='utf8',
+            connect_timeout=timeout,
+            # TODO: check if `asyncpg` connections
+            # are autocommit by default
+            autocommit=True,
+            minsize=1,
+            maxsize=1,
+            loop=loop) as engine:
+        async with engine.acquire() as connection:
+            yield connection
 
 
 @async_contextmanager

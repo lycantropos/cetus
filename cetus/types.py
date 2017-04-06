@@ -3,7 +3,7 @@ from typing import (Any, Union,
                     Generator,
                     Tuple, List)
 
-from aiomysql.connection import Connection as MySQLConnection
+from aiomysql.sa.connection import SAConnection as MySQLConnection
 from aiomysql.pool import Pool as MySQLConnectionPool
 from asyncpg.connection import Connection as PostgresConnection
 from asyncpg.pool import Pool as PostgresConnectionPool

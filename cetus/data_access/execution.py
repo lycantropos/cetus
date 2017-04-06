@@ -2,6 +2,7 @@ from typing import (Union,
                     Iterable,
                     Tuple, List)
 
+from cetus.data_access import begin_transaction
 from cetus.types import (ConnectionType,
                          RecordType,
                          ColumnValueType)
@@ -15,11 +16,13 @@ async def execute(query: str,
                   is_mysql: bool,
                   connection: ConnectionType
                   ) -> Union[int, str]:
-    if is_mysql:
-        async with connection.cursor() as cursor:
-            resp = await cursor.execute(query, args=args)
-    else:
-        resp = await connection.execute(query, *args)
+    async with begin_transaction(connection=connection,
+                                 is_mysql=is_mysql):
+        if is_mysql:
+            async with connection.connection.cursor() as cursor:
+                resp = await cursor.execute(query, args=args)
+        else:
+            resp = await connection.execute(query, *args)
     return resp
 
 
@@ -29,11 +32,13 @@ async def execute_many(query: str, *,
                        is_mysql: bool,
                        connection: ConnectionType
                        ) -> None:
-    if is_mysql:
-        async with connection.cursor() as cursor:
-            await cursor.executemany(query, args=args)
-    else:
-        await connection.executemany(query, args=args)
+    async with begin_transaction(connection=connection,
+                                 is_mysql=is_mysql):
+        if is_mysql:
+            async with connection.connection.cursor() as cursor:
+                await cursor.executemany(query, args=args)
+        else:
+            await connection.executemany(query, args=args)
 
 
 @handle_exceptions
@@ -42,7 +47,7 @@ async def fetch_row(query: str, *,
                     connection: ConnectionType
                     ) -> RecordType:
     if is_mysql:
-        async with connection.cursor() as cursor:
+        async with connection.connection.cursor() as cursor:
             await cursor.execute(query)
             resp = await cursor.fetchone()
             return resp
@@ -59,7 +64,7 @@ async def fetch_rows(query: str,
                      connection: ConnectionType
                      ) -> List[RecordType]:
     if is_mysql:
-        async with connection.cursor() as cursor:
+        async with connection.connection.cursor() as cursor:
             await cursor.execute(query, args=args)
             return [row async for row in cursor]
     else:
