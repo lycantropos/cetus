@@ -3,7 +3,6 @@ from typing import Optional
 
 import aiomysql.sa
 import asyncpg
-from aiomysql.sa.transaction import RootTransaction
 from asyncio_extras import async_contextmanager
 from cetus.types import (ConnectionType,
                          MySQLConnectionType,
@@ -108,7 +107,7 @@ async def begin_transaction(
 @async_contextmanager
 async def begin_mysql_transaction(
         connection: MySQLConnectionType):
-    transaction = RootTransaction(connection)
+    transaction = connection.begin()
     async with transaction:
         yield
 
