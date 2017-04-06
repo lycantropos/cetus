@@ -1,5 +1,6 @@
 from .connectors import (get_connection_pool,
-                         get_connection)
+                         get_connection,
+                         begin_transaction)
 from .deletion import delete
 from .reading import (fetch,
                       fetch_max_connections,

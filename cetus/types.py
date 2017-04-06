@@ -7,6 +7,7 @@ from aiomysql.connection import Connection as MySQLConnection
 from aiomysql.pool import Pool as MySQLConnectionPool
 from asyncpg.connection import Connection as PostgresConnection
 from asyncpg.pool import Pool as PostgresConnectionPool
+from asyncpg.transaction import Transaction as PostgresTransaction
 
 StringGenerator = Generator[str, None, None]
 
@@ -23,5 +24,8 @@ FilterType = Tuple[str,
 FiltersType = Tuple[str, Any]
 OrderingType = Tuple[str, str]
 
-ConnectionType = Union[MySQLConnection, PostgresConnection]
+MySQLConnectionType = MySQLConnection
+PostgresConnectionType = PostgresConnection
+ConnectionType = Union[MySQLConnectionType, PostgresConnectionType]
+TransactionType = Union[PostgresTransaction]
 ConnectionPoolType = Union[MySQLConnectionPool, PostgresConnectionPool]
