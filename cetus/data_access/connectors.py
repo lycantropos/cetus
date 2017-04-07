@@ -13,6 +13,7 @@ DEFAULT_MYSQL_PORT = 3306
 DEFAULT_POSTGRES_PORT = 5432
 
 DEFAULT_MIN_CONNECTIONS_LIMIT = 10
+DEFAULT_CONNECTION_TIMEOUT = 60
 
 
 @async_contextmanager
@@ -130,7 +131,7 @@ async def begin_postgres_transaction(
 async def get_connection(
         *, db_uri: URL,
         is_mysql: bool,
-        timeout: Optional[float] = None,
+        timeout: float = DEFAULT_CONNECTION_TIMEOUT,
         loop: AbstractEventLoop):
     if is_mysql:
         async with get_mysql_connection(
@@ -149,7 +150,7 @@ async def get_connection(
 @async_contextmanager
 async def get_mysql_connection(
         db_uri: URL, *,
-        timeout: Optional[float],
+        timeout: float = DEFAULT_CONNECTION_TIMEOUT,
         loop: AbstractEventLoop):
     # `None` port causes exceptions
     port = db_uri.port or DEFAULT_MYSQL_PORT
@@ -178,7 +179,7 @@ async def get_mysql_connection(
 @async_contextmanager
 async def get_postgres_connection(
         db_uri: URL, *,
-        timeout: Optional[float],
+        timeout: float = DEFAULT_CONNECTION_TIMEOUT,
         loop: AbstractEventLoop):
     # for symmetry with MySQL case
     port = db_uri.port or DEFAULT_POSTGRES_PORT
