@@ -2,7 +2,6 @@ from typing import (Union,
                     Iterable,
                     Tuple, List)
 
-from cetus.data_access import begin_transaction
 from cetus.types import (ConnectionType,
                          RecordType,
                          ColumnValueType)
@@ -16,13 +15,11 @@ async def execute(query: str,
                   is_mysql: bool,
                   connection: ConnectionType
                   ) -> Union[int, str]:
-    async with begin_transaction(connection=connection,
-                                 is_mysql=is_mysql):
-        if is_mysql:
-            async with connection.connection.cursor() as cursor:
-                resp = await cursor.execute(query, args=args)
-        else:
-            resp = await connection.execute(query, *args)
+    if is_mysql:
+        async with connection.connection.cursor() as cursor:
+            resp = await cursor.execute(query, args=args)
+    else:
+        resp = await connection.execute(query, *args)
     return resp
 
 
@@ -32,13 +29,11 @@ async def execute_many(query: str, *,
                        is_mysql: bool,
                        connection: ConnectionType
                        ) -> None:
-    async with begin_transaction(connection=connection,
-                                 is_mysql=is_mysql):
-        if is_mysql:
-            async with connection.connection.cursor() as cursor:
-                await cursor.executemany(query, args=args)
-        else:
-            await connection.executemany(query, args=args)
+    if is_mysql:
+        async with connection.connection.cursor() as cursor:
+            await cursor.executemany(query, args=args)
+    else:
+        await connection.executemany(query, args=args)
 
 
 @handle_exceptions

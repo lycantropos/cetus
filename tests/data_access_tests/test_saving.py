@@ -16,19 +16,16 @@ from tests.utils import fetch
 async def test_insert(table: Table,
                       table_name: str,
                       table_columns_names: List[str],
-                      table_primary_key: str,
                       table_records: List[RecordType],
                       is_mysql: bool,
                       db_uri: URL,
                       event_loop: AbstractEventLoop
                       ) -> None:
-    unique_columns_names = [table_primary_key]
     async with get_connection(db_uri=db_uri,
                               is_mysql=is_mysql,
                               loop=event_loop) as connection:
         await insert(table_name=table_name,
                      columns_names=table_columns_names,
-                     unique_columns_names=unique_columns_names,
                      records=table_records,
                      is_mysql=is_mysql,
                      connection=connection)
@@ -49,16 +46,14 @@ async def test_insert_returning(table_name: str,
                                 db_uri: URL,
                                 event_loop: AbstractEventLoop
                                 ) -> None:
-    unique_columns_names = [table_primary_key]
-
     async with get_connection(db_uri=db_uri,
                               is_mysql=is_mysql,
                               loop=event_loop) as connection:
         records = await insert_returning(
             table_name=table_name,
             columns_names=table_columns_names,
-            unique_columns_names=unique_columns_names,
             returning_columns_names=table_columns_names,
+            primary_key=table_primary_key,
             records=table_records,
             connection=connection,
             is_mysql=is_mysql)

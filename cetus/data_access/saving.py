@@ -15,14 +15,10 @@ from .execution import (execute_many,
 from .reading import fetch_rows
 
 
-async def insert(
-        *, table_name: str,
-        columns_names: List[str],
-        unique_columns_names: Optional[List[str]] = None,
-        records: Iterable[RecordType],
-        merge: bool = False,
-        connection: ConnectionType,
-        is_mysql: bool) -> Optional[ColumnValueType]:
+async def insert(*, table_name: str, columns_names: List[str],
+                 unique_columns_names: Optional[List[str]] = None,
+                 records: Iterable[RecordType], merge: bool = False, is_mysql: bool,
+                 connection: ConnectionType) -> Optional[ColumnValueType]:
     query = await generate_insert_query(
         table_name=table_name,
         columns_names=columns_names,
@@ -41,11 +37,16 @@ async def insert_returning(
         columns_names: List[str],
         unique_columns_names: Optional[List[str]] = None,
         returning_columns_names: List[str],
+        primary_key: Optional[str] = None,
         records: Iterable[RecordType],
         merge: bool = False,
         connection: ConnectionType,
         is_mysql: bool) -> Optional[ColumnValueType]:
     if is_mysql:
+        if primary_key is None:
+            raise ValueError('In case of MySQL processing '
+                             'primary key has to be specified, '
+                             f'but found: "{primary_key}".')
         insert_query = await generate_insert_query(
             table_name=table_name,
             columns_names=columns_names,
@@ -58,7 +59,6 @@ async def insert_returning(
                           *record,
                           is_mysql=is_mysql,
                           connection=connection)
-        primary_key = unique_columns_names[0]
         resp = await fetch_rows(
             f'SELECT LAST_INSERT_ID({primary_key}) '
             f'FROM {table_name}',
