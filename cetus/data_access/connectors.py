@@ -20,7 +20,7 @@ DEFAULT_CONNECTION_TIMEOUT = 60
 async def get_connection_pool(
         *, db_uri: URL,
         is_mysql: bool,
-        timeout: Optional[float] = None,
+        timeout: float = DEFAULT_CONNECTION_TIMEOUT,
         min_size: int = DEFAULT_MIN_CONNECTIONS_LIMIT,
         max_size: int,
         loop: AbstractEventLoop):
@@ -45,7 +45,7 @@ async def get_connection_pool(
 @async_contextmanager
 async def get_mysql_connection_pool(
         db_uri: URL, *,
-        timeout: Optional[float],
+        timeout: float = DEFAULT_CONNECTION_TIMEOUT,
         min_size: int = DEFAULT_MIN_CONNECTIONS_LIMIT,
         max_size: int,
         loop: AbstractEventLoop):
@@ -74,7 +74,7 @@ async def get_mysql_connection_pool(
 @async_contextmanager
 async def get_postgres_connection_pool(
         db_uri: URL, *,
-        timeout: Optional[float],
+        timeout: float = DEFAULT_CONNECTION_TIMEOUT,
         min_size: int = DEFAULT_MIN_CONNECTIONS_LIMIT,
         max_size: int,
         loop: AbstractEventLoop):
