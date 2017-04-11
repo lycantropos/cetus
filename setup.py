@@ -21,7 +21,7 @@ setup(name='cetus',
       setup_requires=['pytest-runner'],
       tests_require=['sqlalchemy-utils>=0.32.12',  # database creation/cleaning
                      'psycopg2>=2.6.2',  # working with Postgres
-                     'PyMySQL>=0.7.30',  # working with MySQL
+                     'PyMySQL>=0.7.0',  # working with MySQL
                      'pydevd',  # debugging
                      'pytest>=3.0.5',
                      'pytest-asyncio',

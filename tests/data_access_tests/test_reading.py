@@ -5,8 +5,9 @@ import pytest
 from cetus.data_access import (get_connection,
                                fetch,
                                group_wise_fetch,
-                               fetch_records_count)
-from cetus.data_access import group_wise_fetch_records_count
+                               fetch_records_count,
+                               group_wise_fetch_records_count,
+                               fetch_max_connections)
 from cetus.types import RecordType
 from hypothesis import strategies
 from sqlalchemy import Table
@@ -16,13 +17,13 @@ from tests.utils import (insert,
 
 
 @pytest.mark.asyncio
-async def test_fetch_records_count(table: Table,
-                                   table_name: str,
-                                   table_records: List[RecordType],
-                                   is_mysql: bool,
-                                   db_uri: URL,
-                                   event_loop: AbstractEventLoop
-                                   ) -> None:
+async def test_fetch_records_count(
+        table: Table,
+        table_name: str,
+        table_records: List[RecordType],
+        is_mysql: bool,
+        db_uri: URL,
+        event_loop: AbstractEventLoop) -> None:
     table_records_dicts = records_to_dicts(
         records=table_records,
         table=table)
@@ -81,14 +82,14 @@ async def test_group_wise_fetch_records_count(
 
 
 @pytest.mark.asyncio
-async def test_fetch(table: Table,
-                     table_name: str,
-                     table_columns_names: List[str],
-                     table_records: List[RecordType],
-                     is_mysql: bool,
-                     db_uri: URL,
-                     event_loop: AbstractEventLoop
-                     ) -> None:
+async def test_fetch(
+        table: Table,
+        table_name: str,
+        table_columns_names: List[str],
+        table_records: List[RecordType],
+        is_mysql: bool,
+        db_uri: URL,
+        event_loop: AbstractEventLoop) -> None:
     table_records_dicts = records_to_dicts(
         records=table_records,
         table=table)
@@ -123,17 +124,17 @@ def is_group_wise_maximum():
 
 
 @pytest.mark.asyncio
-async def test_group_wise_fetch(table: Table,
-                                table_name: str,
-                                table_columns_names: List[str],
-                                table_non_unique_columns_names: List[str],
-                                table_primary_key: str,
-                                table_similar_records: List[RecordType],
-                                is_group_wise_maximum: bool,
-                                is_mysql: bool,
-                                db_uri: URL,
-                                event_loop: AbstractEventLoop
-                                ) -> None:
+async def test_group_wise_fetch(
+        table: Table,
+        table_name: str,
+        table_columns_names: List[str],
+        table_non_unique_columns_names: List[str],
+        table_primary_key: str,
+        table_similar_records: List[RecordType],
+        is_group_wise_maximum: bool,
+        is_mysql: bool,
+        db_uri: URL,
+        event_loop: AbstractEventLoop) -> None:
     target_function = max if is_group_wise_maximum else min
     target_primary_key_value = target_function(record[0]
                                                for record in table_similar_records)
@@ -148,13 +149,14 @@ async def test_group_wise_fetch(table: Table,
     async with get_connection(db_uri=db_uri,
                               is_mysql=is_mysql,
                               loop=event_loop) as connection:
-        records = await group_wise_fetch(table_name=table_name,
-                                         columns_names=table_columns_names,
-                                         target_column_name=table_primary_key,
-                                         groupings=table_non_unique_columns_names,
-                                         is_maximum=is_group_wise_maximum,
-                                         is_mysql=is_mysql,
-                                         connection=connection)
+        records = await group_wise_fetch(
+            table_name=table_name,
+            columns_names=table_columns_names,
+            target_column_name=table_primary_key,
+            groupings=table_non_unique_columns_names,
+            is_maximum=is_group_wise_maximum,
+            is_mysql=is_mysql,
+            connection=connection)
 
     assert all(record in table_similar_records
                for record in records)
@@ -167,12 +169,13 @@ async def test_group_wise_fetch(table: Table,
         async with get_connection(db_uri=db_uri,
                                   is_mysql=is_mysql,
                                   loop=event_loop) as connection:
-            await group_wise_fetch(table_name=table_name,
-                                   columns_names=[],
-                                   target_column_name=table_primary_key,
-                                   groupings=table_non_unique_columns_names,
-                                   is_mysql=is_mysql,
-                                   connection=connection)
+            await group_wise_fetch(
+                table_name=table_name,
+                columns_names=[],
+                target_column_name=table_primary_key,
+                groupings=table_non_unique_columns_names,
+                is_mysql=is_mysql,
+                connection=connection)
 
     with pytest.raises(ValueError):
         async with get_connection(db_uri=db_uri,
@@ -184,3 +187,19 @@ async def test_group_wise_fetch(table: Table,
                                    groupings=[],
                                    is_mysql=is_mysql,
                                    connection=connection)
+
+
+@pytest.mark.asyncio
+async def test_fetch_max_connections(
+        is_mysql: bool,
+        db_uri: URL,
+        event_loop: AbstractEventLoop) -> None:
+    async with get_connection(db_uri=db_uri,
+                              is_mysql=is_mysql,
+                              loop=event_loop) as connection:
+        max_connections = await fetch_max_connections(
+            is_mysql=is_mysql,
+            connection=connection)
+
+    assert isinstance(max_connections, int)
+    assert max_connections > 0

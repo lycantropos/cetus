@@ -3,6 +3,8 @@ from typing import (Optional,
                     List,
                     Dict)
 
+import pydevd
+
 from .execution import (fetch_row,
                         fetch_rows)
 from cetus.queries import (ALL_COLUMNS_ALIAS,
@@ -202,4 +204,4 @@ async def fetch_postgres_setting(*, setting_name: str,
     resp = await fetch_row(f'SHOW {setting_name}',
                            is_mysql=False,
                            connection=connection)
-    return resp[setting_name]
+    return resp[0]
