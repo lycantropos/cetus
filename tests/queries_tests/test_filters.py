@@ -24,8 +24,9 @@ invalid_filters_strategy = strategies.tuples(
 
 values_strategy = strategies.one_of(strategies.none(),
                                     strategies.integers(),
-                                    strategies.floats(allow_infinity=False,
-                                                      allow_nan=False),
+                                    strategies.floats(
+                                        allow_infinity=False,
+                                        allow_nan=False),
                                     strategies.text(),
                                     date_times_strategy)
 
@@ -35,7 +36,8 @@ def value() -> ColumnValueType:
     return values_strategy.example()
 
 
-def test_normalize_value(value: ColumnValueType) -> None:
+def test_normalize_value(value: ColumnValueType
+                         ) -> None:
     normalized_value = normalize_value(value)
 
     assert isinstance(normalized_value, str)
@@ -51,12 +53,13 @@ def predicate() -> Tuple[str, FilterType]:
     return predicates_strategy.example()
 
 
-@pytest.mark.asyncio
-async def test_predicate_to_str(predicate: Tuple[str, FilterType]) -> None:
+def test_predicate_to_str(predicate: Tuple[str, FilterType]
+                          ) -> None:
     predicate_name, filter_ = predicate
     column_name, value = filter_
-    predicate_str = await predicate_to_str(predicate_name=predicate_name,
-                                           filter_=filter_)
+    predicate_str = predicate_to_str(
+        predicate_name=predicate_name,
+        filter_=filter_)
     assert isinstance(predicate_str, str)
     assert predicate_name in predicate_str
     assert predicate_str.startswith(column_name)
@@ -76,19 +79,19 @@ def invalid_filters() -> FiltersType:
     return invalid_filters_strategy.example()
 
 
-@pytest.mark.asyncio
-async def test_filters_to_str(filters: FiltersType,
-                              invalid_filters: FiltersType):
+def test_filters_to_str(filters: FiltersType,
+                        invalid_filters: FiltersType
+                        ) -> None:
     operator, filter_ = filters
-    filters_str = await filters_to_str(filters)
+    filters_str = filters_to_str(filters)
 
     assert isinstance(filters_str, str)
     if len(filter_) > 1:
         assert operator in filters_str
     if operator in LOGICAL_OPERATORS:
         for sub_filter in filter_:
-            sub_filter_str = await filters_to_str(sub_filter)
+            sub_filter_str = filters_to_str(sub_filter)
             assert sub_filter_str in filters_str
 
     with pytest.raises(ValueError):
-        await filters_to_str(invalid_filters)
+        filters_to_str(invalid_filters)

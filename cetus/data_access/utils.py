@@ -5,7 +5,8 @@ from typing import (Any,
                     Callable,
                     Coroutine,
                     Dict,
-                    Tuple, List)
+                    Tuple,
+                    List)
 
 from asyncpg import PostgresError
 from pymysql import Error
@@ -35,16 +36,15 @@ def handle_exceptions(function: Callable[..., Coroutine]
     return decorated
 
 
-async def is_db_uri_mysql(db_uri: URL) -> bool:
+def is_db_uri_mysql(db_uri: URL) -> bool:
     backend_name = db_uri.get_backend_name()
     return backend_name == MYSQL_DRIVER_NAME_PREFIX
 
 
-async def normalize_pagination(*, limit: Optional[int],
-                               offset: Optional[int],
-                               is_mysql: bool
-                               ) -> Tuple[Optional[int],
-                                          Optional[int]]:
+def normalize_pagination(
+        *, limit: Optional[int],
+        offset: Optional[int],
+        is_mysql: bool) -> Tuple[Optional[int], Optional[int]]:
     if is_mysql:
         if limit is None and offset is not None:
             warn_msg = ('Incorrect pagination parameters: '
@@ -62,16 +62,16 @@ async def normalize_pagination(*, limit: Optional[int],
     return limit, offset
 
 
-async def generate_table_columns_names(*,
-                                       columns_names: List[str],
-                                       columns_aliases: List[str]
-                                       ) -> List[str]:
+def generate_table_columns_names(
+        *,
+        columns_names: List[str],
+        columns_aliases: List[str]) -> List[str]:
     return [f'{column_name} AS {column_alias}'
             for column_name, column_alias in zip(columns_names,
                                                  columns_aliases)]
 
 
-async def generate_table_columns_aliases(
+def generate_table_columns_aliases(
         *,
         columns_names: List[str],
         columns_aliases: Optional[Dict[str, str]] = None) -> List[str]:

@@ -14,7 +14,7 @@ from .utils import (ALL_COLUMNS_ALIAS,
                     check_query_parameters)
 
 
-async def generate_select_query(
+def generate_select_query(
         *, table_name: str,
         columns_names: List[str],
         filters: Optional[FiltersType] = None,
@@ -22,24 +22,24 @@ async def generate_select_query(
         groupings: List[str] = None,
         limit: Optional[int] = None,
         offset: Optional[int] = None) -> str:
-    await check_query_parameters(columns_names=columns_names)
+    check_query_parameters(columns_names=columns_names)
 
     columns = join_str(columns_names)
     query = (f'SELECT {columns} '
              f'FROM {table_name} ')
-    query = await add_filters(query,
-                              filters=filters)
-    query = await add_orderings(query,
-                                orderings=orderings)
-    query = await add_groupings(query,
-                                groupings=groupings)
-    query = await add_pagination(query,
-                                 limit=limit,
-                                 offset=offset)
+    query = add_filters(query,
+                        filters=filters)
+    query = add_orderings(query,
+                          orderings=orderings)
+    query = add_groupings(query,
+                          groupings=groupings)
+    query = add_pagination(query,
+                           limit=limit,
+                           offset=offset)
     return query
 
 
-async def generate_group_wise_query(
+def generate_group_wise_query(
         *, table_name: str,
         columns_names: List[str],
         target_column_name: str,
@@ -50,11 +50,11 @@ async def generate_group_wise_query(
         orderings: Optional[List[OrderingType]] = None,
         is_maximum: bool,
         is_mysql: bool) -> str:
-    await check_query_parameters(columns_names=columns_names,
-                                 groupings=groupings)
+    check_query_parameters(columns_names=columns_names,
+                           groupings=groupings)
 
     if is_mysql:
-        query = await generate_mysql_group_wise_query(
+        query = generate_mysql_group_wise_query(
             table_name=table_name,
             columns_names=columns_names,
             target_column_name=target_column_name,
@@ -65,7 +65,7 @@ async def generate_group_wise_query(
             orderings=orderings,
             is_maximum=is_maximum)
     else:
-        query = await generate_postgres_group_wise_query(
+        query = generate_postgres_group_wise_query(
             table_name=table_name,
             columns_names=columns_names,
             target_column_name=target_column_name,
@@ -77,7 +77,7 @@ async def generate_group_wise_query(
     return query
 
 
-async def generate_mysql_group_wise_query(
+def generate_mysql_group_wise_query(
         *, table_name: str,
         columns_names: List[str],
         target_column_name: str,
@@ -95,23 +95,23 @@ async def generate_mysql_group_wise_query(
     query = (f'SELECT {groupings_str}, '
              f'{operator}({target_column_name}) AS {target_column_name} '
              f'FROM {table_name} ')
-    query = await add_filters(query,
-                              filters=filters)
-    query = await add_pagination(query,
-                                 limit=limit,
-                                 offset=offset)
-    query = await add_groupings(query,
-                                groupings=groupings)
+    query = add_filters(query,
+                        filters=filters)
+    query = add_pagination(query,
+                           limit=limit,
+                           offset=offset)
+    query = add_groupings(query,
+                          groupings=groupings)
     query = (f'SELECT {columns} '
              f'FROM {table_name} '
              f'JOIN ({query}) as subquery '
              f'USING ({groupings_str}, {target_column_name}) ')
-    query = await add_orderings(query,
-                                orderings=orderings)
+    query = add_orderings(query,
+                          orderings=orderings)
     return query
 
 
-async def generate_postgres_group_wise_query(
+def generate_postgres_group_wise_query(
         *, table_name: str,
         columns_names: List[str],
         target_column_name: str,
@@ -124,32 +124,32 @@ async def generate_postgres_group_wise_query(
     # based on article
     # https://explainextended.com/2009/11/26/postgresql-selecting-records-holding-group-wise-maximum/
     columns = join_str(columns_names)
-    group_wise_orderings = await generate_group_wise_orderings(
+    group_wise_orderings = generate_group_wise_orderings(
         groupings=groupings,
         target_column_name=target_column_name,
         is_maximum=is_maximum)
     groupings_str = join_str(groupings)
     query = (f'SELECT DISTINCT ON ({groupings_str}) {ALL_COLUMNS_ALIAS} '
              f'FROM {table_name} ')
-    query = await add_filters(query,
-                              filters=filters)
-    query = await add_orderings(query,
-                                orderings=group_wise_orderings)
+    query = add_filters(query,
+                        filters=filters)
+    query = add_orderings(query,
+                          orderings=group_wise_orderings)
     query = (f'SELECT {columns} '
              f'FROM ({query}) AS subquery ')
-    query = await add_orderings(query,
-                                orderings=orderings)
-    query = await add_pagination(query,
-                                 limit=limit,
-                                 offset=offset)
+    query = add_orderings(query,
+                          orderings=orderings)
+    query = add_pagination(query,
+                           limit=limit,
+                           offset=offset)
     return query
 
 
-async def generate_group_wise_orderings(*,
-                                        groupings: List[str],
-                                        target_column_name: str,
-                                        is_maximum: bool
-                                        ) -> List[OrderingType]:
+def generate_group_wise_orderings(*,
+                                  groupings: List[str],
+                                  target_column_name: str,
+                                  is_maximum: bool
+                                  ) -> List[OrderingType]:
     ordering = (target_column_name,
                 ORDERS_ALIASES['descending'] if is_maximum
                 else ORDERS_ALIASES['ascending'])

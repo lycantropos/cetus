@@ -1,15 +1,13 @@
-from typing import (Union,
-                    Callable)
+from typing import Callable
 
+from cetus.types import ColumnValueType
 from sqlalchemy.engine.default import DefaultDialect
-from sqlalchemy.orm import Query
-from sqlalchemy.sql import ClauseElement
+from sqlalchemy.orm.query import Query
+from sqlalchemy.sql.elements import ClauseElement
 from sqlalchemy.sql.sqltypes import (String,
                                      Interval,
                                      Date,
                                      DateTime)
-
-from cetus.types import ColumnValueType
 
 
 class StringLiteral(String):
@@ -40,17 +38,15 @@ class LiteralDialect(DefaultDialect):
     }
 
 
-def query_to_str(statement_or_query: Union[ClauseElement, Query]
+def query_to_str(query: Query
                  ) -> str:
-    statement = get_statement(statement_or_query)
+    statement = query.statement
+    return statement_to_str(statement)
+
+
+def statement_to_str(statement: ClauseElement
+                     ) -> str:
     compiled_query = statement.compile(
         dialect=LiteralDialect(),
         compile_kwargs={'literal_binds': True})
     return compiled_query.string
-
-
-def get_statement(statement_or_query: Union[ClauseElement, Query]
-                  ) -> ClauseElement:
-    if isinstance(statement_or_query, Query):
-        return statement_or_query.statement
-    return statement_or_query

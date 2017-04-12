@@ -3,10 +3,6 @@ from typing import (Optional,
                     List,
                     Dict)
 
-import pydevd
-
-from .execution import (fetch_row,
-                        fetch_rows)
 from cetus.queries import (ALL_COLUMNS_ALIAS,
                            generate_select_query,
                            generate_group_wise_query)
@@ -16,6 +12,8 @@ from cetus.types import (ConnectionType,
                          FiltersType,
                          OrderingType)
 
+from .execution import (fetch_row,
+                        fetch_rows)
 from .utils import (normalize_pagination,
                     generate_table_columns_names,
                     generate_table_columns_aliases)
@@ -34,7 +32,7 @@ async def fetch_column_function(
     column_alias = f'{column_function_name}_1'
     function_column = (f'{column_function_name}({column_name}) '
                        f'AS {column_alias}')
-    query = await generate_select_query(
+    query = generate_select_query(
         table_name=table_name,
         columns_names=[function_column],
         filters=filters,
@@ -69,7 +67,7 @@ async def group_wise_fetch_column_function(
     column_alias = f'{column_function_name}_1'
     function_column = (f'{column_function_name}({column_name}) '
                        f'AS {column_alias}')
-    query = await generate_group_wise_query(
+    query = generate_group_wise_query(
         table_name=table_name,
         columns_names=[function_column],
 
@@ -102,19 +100,19 @@ async def fetch(
         offset: Optional[int] = None,
         is_mysql: bool,
         connection: ConnectionType) -> List[RecordType]:
-    limit, offset = await normalize_pagination(
+    limit, offset = normalize_pagination(
         limit=limit,
         offset=offset,
         is_mysql=is_mysql)
 
-    columns_aliases = await generate_table_columns_aliases(
+    columns_aliases = generate_table_columns_aliases(
         columns_names=columns_names,
         columns_aliases=columns_aliases)
-    columns_names = await generate_table_columns_names(
+    columns_names = generate_table_columns_names(
         columns_names=columns_names,
         columns_aliases=columns_aliases)
 
-    query = await generate_select_query(
+    query = generate_select_query(
         table_name=table_name,
         columns_names=columns_names,
         filters=filters,
@@ -143,19 +141,19 @@ async def group_wise_fetch(
         is_maximum: bool = True,
         is_mysql: bool,
         connection: ConnectionType) -> List[RecordType]:
-    limit, offset = await normalize_pagination(
+    limit, offset = normalize_pagination(
         limit=limit,
         offset=offset,
         is_mysql=is_mysql)
 
-    columns_aliases = await generate_table_columns_aliases(
+    columns_aliases = generate_table_columns_aliases(
         columns_names=columns_names,
         columns_aliases=columns_aliases)
-    columns_names = await generate_table_columns_names(
+    columns_names = generate_table_columns_names(
         columns_names=columns_names,
         columns_aliases=columns_aliases)
 
-    query = await generate_group_wise_query(
+    query = generate_group_wise_query(
         table_name=table_name,
         columns_names=columns_names,
         target_column_name=target_column_name,

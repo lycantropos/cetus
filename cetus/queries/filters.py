@@ -20,16 +20,16 @@ PREDICATES = (INCLUSION_OPERATORS
               | COMPARISON_OPERATORS)
 
 
-async def filters_to_str(filters: FiltersType) -> str:
+def filters_to_str(filters: FiltersType) -> str:
     operator, filter_ = filters
     if operator in LOGICAL_OPERATORS:
-        sub_filters = [await filters_to_str(sub_filter)
+        sub_filters = [filters_to_str(sub_filter)
                        for sub_filter in filter_]
         return operator.join(f'({sub_filter})'
                              for sub_filter in sub_filters)
     elif operator in PREDICATES:
-        res = await predicate_to_str(predicate_name=operator,
-                                     filter_=filter_)
+        res = predicate_to_str(predicate_name=operator,
+                               filter_=filter_)
         return res
     else:
         err_msg = ('Invalid filters operator: '
@@ -39,9 +39,9 @@ async def filters_to_str(filters: FiltersType) -> str:
         raise ValueError(err_msg)
 
 
-async def predicate_to_str(*, predicate_name: str,
-                           filter_: FilterType
-                           ) -> str:
+def predicate_to_str(*, predicate_name: str,
+                     filter_: FilterType
+                     ) -> str:
     column_name, value = filter_
     if predicate_name in INCLUSION_OPERATORS:
         value = map(normalize_value, value)

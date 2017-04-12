@@ -8,22 +8,22 @@ aiomysql_label_template = '%s'.format
 asyncpg_label_template = '${}'.format
 
 
-async def generate_insert_query(
+def generate_insert_query(
         *, table_name: str,
         columns_names: List[str],
         unique_columns_names: Optional[List[str]] = None,
         merge: bool,
         is_mysql: bool) -> str:
-    await check_query_parameters(columns_names=columns_names)
+    check_query_parameters(columns_names=columns_names)
 
     if is_mysql:
-        query = await generate_mysql_insert_query(
+        query = generate_mysql_insert_query(
             table_name=table_name,
             columns_names=columns_names,
             unique_columns_names=unique_columns_names,
             merge=merge)
     else:
-        query = await generate_postgres_insert_query(
+        query = generate_postgres_insert_query(
             table_name=table_name,
             columns_names=columns_names,
             unique_columns_names=unique_columns_names,
@@ -31,7 +31,7 @@ async def generate_insert_query(
     return query
 
 
-async def generate_mysql_insert_query(
+def generate_mysql_insert_query(
         *, table_name: str,
         columns_names: List[str],
         unique_columns_names: Optional[List[str]] = None,
@@ -56,7 +56,7 @@ async def generate_mysql_insert_query(
     return res
 
 
-async def generate_postgres_insert_query(
+def generate_postgres_insert_query(
         *, table_name: str,
         columns_names: List[str],
         unique_columns_names: Optional[List[str]] = None,
@@ -85,13 +85,13 @@ async def generate_postgres_insert_query(
     return res
 
 
-async def generate_postgres_insert_returning_query(
+def generate_postgres_insert_returning_query(
         *, table_name: str,
         columns_names: List[str],
         unique_columns_names: List[str] = None,
         returning_columns_names: List[str],
         merge: bool = False) -> str:
-    res = await generate_postgres_insert_query(
+    res = generate_postgres_insert_query(
         table_name=table_name,
         columns_names=columns_names,
         unique_columns_names=unique_columns_names,

@@ -15,11 +15,15 @@ from .execution import (execute_many,
 from .reading import fetch_rows
 
 
-async def insert(*, table_name: str, columns_names: List[str],
-                 unique_columns_names: Optional[List[str]] = None,
-                 records: Iterable[RecordType], merge: bool = False, is_mysql: bool,
-                 connection: ConnectionType) -> Optional[ColumnValueType]:
-    query = await generate_insert_query(
+async def insert(
+        *, table_name: str,
+        columns_names: List[str],
+        unique_columns_names: Optional[List[str]] = None,
+        records: Iterable[RecordType],
+        merge: bool = False,
+        is_mysql: bool,
+        connection: ConnectionType) -> Optional[ColumnValueType]:
+    query = generate_insert_query(
         table_name=table_name,
         columns_names=columns_names,
         unique_columns_names=unique_columns_names,
@@ -47,7 +51,7 @@ async def insert_returning(
             raise ValueError('In case of MySQL processing '
                              'primary key has to be specified, '
                              f'but found: "{primary_key}".')
-        insert_query = await generate_insert_query(
+        insert_query = generate_insert_query(
             table_name=table_name,
             columns_names=columns_names,
             unique_columns_names=unique_columns_names,
@@ -66,14 +70,14 @@ async def insert_returning(
             connection=connection)
         primary_key_values = [row[0] for row in resp]
         filters = 'IN', (primary_key, primary_key_values)
-        query = await generate_select_query(table_name=table_name,
-                                            columns_names=returning_columns_names,
-                                            filters=filters)
+        query = generate_select_query(table_name=table_name,
+                                      columns_names=returning_columns_names,
+                                      filters=filters)
         resp = await fetch_rows(query,
                                 is_mysql=is_mysql,
                                 connection=connection)
     else:
-        query = await generate_postgres_insert_returning_query(
+        query = generate_postgres_insert_returning_query(
             table_name=table_name,
             columns_names=columns_names,
             unique_columns_names=unique_columns_names,

@@ -2,9 +2,11 @@ import logging
 import time
 from contextlib import (closing,
                         contextmanager)
-from typing import List, Dict
+from typing import (List,
+                    Dict)
 
-from sqlalchemy import Table, create_engine
+from sqlalchemy.schema import Table
+from sqlalchemy.engine import create_engine
 from sqlalchemy.engine.url import URL
 from sqlalchemy.exc import OperationalError
 
@@ -56,8 +58,8 @@ def check_connection(db_uri: URL, *,
     with get_engine(db_uri) as engine:
         for attempt_num in range(retry_attempts):
             try:
-                connection = engine.connect()
-                connection.close()
+                with engine.connect():
+                    pass
                 break
             except OperationalError:
                 err_msg = ('Connection attempt '

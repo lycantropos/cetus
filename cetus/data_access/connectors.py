@@ -1,5 +1,4 @@
 from asyncio import AbstractEventLoop
-from typing import Optional
 
 import aiomysql.sa
 import asyncpg

@@ -1,7 +1,9 @@
 from datetime import datetime
-from typing import (Any, Union,
+from typing import (Any,
+                    Union,
                     Generator,
-                    Tuple, List)
+                    Tuple,
+                    List)
 
 from aiomysql.sa.connection import SAConnection as MySQLConnection
 from aiomysql.pool import Pool as MySQLConnectionPool
@@ -19,13 +21,16 @@ FilterType = Tuple[str,
                    Union[
                        ColumnValueType,  # single value
                        List[ColumnValueType],  # list of values
-                       Tuple[ColumnValueType, ColumnValueType]  # values range
+                       Tuple[ColumnValueType,
+                             ColumnValueType]  # values range
                    ]]
 FiltersType = Tuple[str, Any]
 OrderingType = Tuple[str, str]
 
 MySQLConnectionType = MySQLConnection
 PostgresConnectionType = PostgresConnection
-ConnectionType = Union[MySQLConnectionType, PostgresConnectionType]
+ConnectionType = Union[MySQLConnectionType,
+                       PostgresConnectionType]
 TransactionType = Union[PostgresTransaction]
-ConnectionPoolType = Union[MySQLConnectionPool, PostgresConnectionPool]
+ConnectionPoolType = Union[MySQLConnectionPool,
+                           PostgresConnectionPool]
