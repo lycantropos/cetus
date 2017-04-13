@@ -9,8 +9,8 @@ from cetus.queries.filters import (LOGICAL_OPERATORS,
                                    INCLUSION_OPERATORS,
                                    RANGE_OPERATORS,
                                    predicate_to_str,
-                                   normalize_value,
                                    filters_to_str)
+from cetus.queries.utils import normalize_value
 from cetus.types import (ColumnValueType,
                          FiltersType,
                          FilterType)

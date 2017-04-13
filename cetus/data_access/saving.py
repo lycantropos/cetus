@@ -5,10 +5,13 @@ from typing import (Optional,
 
 from cetus.queries import (generate_insert_query,
                            generate_select_query,
-                           generate_postgres_insert_returning_query)
+                           generate_postgres_insert_returning_query,
+                           generate_update_query)
 from cetus.types import (ConnectionType,
                          RecordType,
-                         ColumnValueType)
+                         ColumnValueType,
+                         FiltersType,
+                         UpdatesType)
 
 from .execution import (execute_many,
                         execute)
@@ -16,7 +19,8 @@ from .reading import fetch_rows
 
 
 async def insert(
-        *, table_name: str,
+        *,
+        table_name: str,
         columns_names: List[str],
         unique_columns_names: Optional[List[str]] = None,
         records: Iterable[RecordType],
@@ -37,7 +41,8 @@ async def insert(
 
 
 async def insert_returning(
-        *, table_name: str,
+        *,
+        table_name: str,
         columns_names: List[str],
         unique_columns_names: Optional[List[str]] = None,
         returning_columns_names: List[str],
@@ -90,3 +95,23 @@ async def insert_returning(
                               connection=connection)
              for record in records]))
     return resp
+
+
+async def update(
+        *,
+        table_name: str,
+        updates: UpdatesType,
+        filters: Optional[FiltersType],
+        records: Iterable[RecordType],
+        is_mysql: bool,
+        connection: ConnectionType) -> Optional[ColumnValueType]:
+    query = generate_update_query(
+        table_name=table_name,
+        updates=updates,
+        filters=filters,
+        is_mysql=is_mysql)
+
+    await execute_many(query,
+                       args=records,
+                       is_mysql=is_mysql,
+                       connection=connection)

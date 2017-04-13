@@ -1,11 +1,8 @@
-from datetime import datetime
-
-from cetus.types import (ColumnValueType,
-                         FiltersType,
+from cetus.types import (FiltersType,
                          FilterType)
 from cetus.utils import join_str
 
-NULL_VALUE = 'NULL'
+from .utils import normalize_value
 
 LOGICAL_OPERATORS = {'AND', 'OR'}
 INCLUSION_OPERATORS = {'IN', 'NOT IN'}
@@ -39,9 +36,10 @@ def filters_to_str(filters: FiltersType) -> str:
         raise ValueError(err_msg)
 
 
-def predicate_to_str(*, predicate_name: str,
-                     filter_: FilterType
-                     ) -> str:
+def predicate_to_str(
+        *,
+        predicate_name: str,
+        filter_: FilterType) -> str:
     column_name, value = filter_
     if predicate_name in INCLUSION_OPERATORS:
         value = map(normalize_value, value)
@@ -52,11 +50,3 @@ def predicate_to_str(*, predicate_name: str,
     else:
         value = normalize_value(value)
     return f'{column_name} {predicate_name} {value}'
-
-
-def normalize_value(value: ColumnValueType) -> str:
-    if isinstance(value, (str, datetime)):
-        return f'\'{value}\''
-    if value is None:
-        return NULL_VALUE
-    return str(value)

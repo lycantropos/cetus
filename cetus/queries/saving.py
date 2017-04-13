@@ -1,6 +1,11 @@
-from typing import List, Optional
+from typing import (Optional,
+                    List)
 
+from cetus.queries.utils import add_updates, add_filters
+from cetus.types import (FiltersType,
+                         UpdatesType)
 from cetus.utils import join_str
+
 from .utils import check_query_parameters
 
 # does nothing, added for symmetry with `asyncpg` version
@@ -9,7 +14,8 @@ asyncpg_label_template = '${}'.format
 
 
 def generate_insert_query(
-        *, table_name: str,
+        *,
+        table_name: str,
         columns_names: List[str],
         unique_columns_names: Optional[List[str]] = None,
         merge: bool,
@@ -32,7 +38,8 @@ def generate_insert_query(
 
 
 def generate_mysql_insert_query(
-        *, table_name: str,
+        *,
+        table_name: str,
         columns_names: List[str],
         unique_columns_names: Optional[List[str]] = None,
         merge: bool) -> str:
@@ -57,7 +64,8 @@ def generate_mysql_insert_query(
 
 
 def generate_postgres_insert_query(
-        *, table_name: str,
+        *,
+        table_name: str,
         columns_names: List[str],
         unique_columns_names: Optional[List[str]] = None,
         merge: bool) -> str:
@@ -86,11 +94,16 @@ def generate_postgres_insert_query(
 
 
 def generate_postgres_insert_returning_query(
-        *, table_name: str,
+        *,
+        table_name: str,
         columns_names: List[str],
         unique_columns_names: List[str] = None,
         returning_columns_names: List[str],
         merge: bool = False) -> str:
+    check_query_parameters(
+        columns_names=columns_names,
+        returning_columns_names=returning_columns_names)
+
     res = generate_postgres_insert_query(
         table_name=table_name,
         columns_names=columns_names,
@@ -99,3 +112,17 @@ def generate_postgres_insert_returning_query(
     returning_columns = join_str(returning_columns_names)
     res += f'RETURNING {returning_columns}'
     return res
+
+
+def generate_update_query(
+        *,
+        table_name: str,
+        updates: UpdatesType,
+        filters: Optional[FiltersType] = None,
+        is_mysql: bool) -> str:
+    query = f'UPDATE {table_name}'
+    query = add_updates(query,
+                        updates=updates)
+    query = add_filters(query,
+                        filters=filters)
+    return query

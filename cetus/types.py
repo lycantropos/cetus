@@ -1,12 +1,15 @@
+from collections import OrderedDict
 from datetime import datetime
 from typing import (Any,
                     Union,
+                    MutableMapping,
+                    KT, VT,
                     Generator,
                     Tuple,
                     List)
 
-from aiomysql.sa.connection import SAConnection as MySQLConnection
 from aiomysql.pool import Pool as MySQLConnectionPool
+from aiomysql.sa.connection import SAConnection as MySQLConnection
 from asyncpg.connection import Connection as PostgresConnection
 from asyncpg.pool import Pool as PostgresConnectionPool
 from asyncpg.transaction import Transaction as PostgresTransaction
@@ -26,6 +29,8 @@ FilterType = Tuple[str,
                    ]]
 FiltersType = Tuple[str, Any]
 OrderingType = Tuple[str, str]
+UpdatesType = type('UpdatesType', bases=(OrderedDict,
+                                         MutableMapping[KT, VT]))
 
 MySQLConnectionType = MySQLConnection
 PostgresConnectionType = PostgresConnection
