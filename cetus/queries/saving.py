@@ -1,12 +1,13 @@
 from typing import (Optional,
                     List)
 
-from cetus.queries.utils import add_updates, add_filters
 from cetus.types import (FiltersType,
                          UpdatesType)
 from cetus.utils import join_str
 
-from .utils import check_query_parameters
+from .utils import (add_updates,
+                    check_query_parameters)
+from cetus.queries.filters import add_filters
 
 # does nothing, added for symmetry with `asyncpg` version
 aiomysql_label_template = '%s'.format
@@ -120,7 +121,7 @@ def generate_update_query(
         updates: UpdatesType,
         filters: Optional[FiltersType] = None,
         is_mysql: bool) -> str:
-    query = f'UPDATE {table_name}'
+    query = f'UPDATE {table_name} '
     query = add_updates(query,
                         updates=updates)
     query = add_filters(query,

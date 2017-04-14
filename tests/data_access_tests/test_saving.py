@@ -2,7 +2,6 @@ from asyncio import AbstractEventLoop
 from typing import List
 
 import pytest
-
 from cetus.data_access import (get_connection,
                                insert,
                                insert_returning)

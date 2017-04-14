@@ -7,11 +7,11 @@ from cetus.utils import join_str
 
 from .utils import (ALL_COLUMNS_ALIAS,
                     ORDERS_ALIASES,
-                    add_filters,
                     add_orderings,
                     add_groupings,
                     add_pagination,
                     check_query_parameters)
+from cetus.queries.filters import add_filters
 
 
 def generate_select_query(

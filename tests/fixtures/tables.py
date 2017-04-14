@@ -30,3 +30,10 @@ def table_primary_key(table: Table) -> str:
     return next(column.name
                 for column in table.columns
                 if column.primary_key)
+
+
+@pytest.fixture(scope='function')
+def table_unique_columns(table: Table) -> List[str]:
+    return [column.name
+            for column in table.columns
+            if column.primary_key or column.unique]

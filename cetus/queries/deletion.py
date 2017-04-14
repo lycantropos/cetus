@@ -1,6 +1,6 @@
 from typing import Optional
 
-from cetus.queries.utils import add_filters
+from cetus.queries.filters import add_filters
 from cetus.types import FiltersType
 
 

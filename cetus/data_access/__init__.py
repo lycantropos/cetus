@@ -10,6 +10,6 @@ from .reading import (fetch,
                       group_wise_fetch_records_count,
                       group_wise_fetch_max_column_value)
 from .saving import (insert,
-                     insert_returning,
-                     update)
+                     insert_returning)
+from .updating import update
 from .utils import is_db_uri_mysql

@@ -1,8 +1,6 @@
 from datetime import datetime
-from typing import (Any,
-                    Optional,
+from typing import (Optional,
                     List,
-                    Tuple,
                     Dict)
 
 from cetus.types import (ColumnValueType,
@@ -10,21 +8,10 @@ from cetus.types import (ColumnValueType,
                          UpdatesType)
 from cetus.utils import join_str
 
-from .filters import filters_to_str
-
 ALL_COLUMNS_ALIAS = '*'
 NULL_VALUE = 'NULL'
 ORDERS_ALIASES = dict(ascending='ASC',
                       descending='DESC')
-
-
-def add_filters(query: str, *,
-                filters: Optional[Tuple[str, Any]]
-                ) -> str:
-    if filters:
-        filters = filters_to_str(filters)
-        query += f'WHERE {filters} '
-    return query
 
 
 def add_orderings(query: str, *,

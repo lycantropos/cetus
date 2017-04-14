@@ -14,12 +14,17 @@ from asyncpg.connection import Connection as PostgresConnection
 from asyncpg.pool import Pool as PostgresConnectionPool
 from asyncpg.transaction import Transaction as PostgresTransaction
 
-StringGenerator = Generator[str, None, None]
 
+class OrderedDictType(OrderedDict, MutableMapping[KT, VT]):
+    pass
+
+
+StringGenerator = Generator[str, None, None]
 ColumnValueType = Union[int, bool,
                         float, str,
                         datetime, None]
 RecordType = Tuple[ColumnValueType, ...]
+
 FilterType = Tuple[str,
                    Union[
                        ColumnValueType,  # single value
@@ -29,8 +34,7 @@ FilterType = Tuple[str,
                    ]]
 FiltersType = Tuple[str, Any]
 OrderingType = Tuple[str, str]
-UpdatesType = type('UpdatesType', bases=(OrderedDict,
-                                         MutableMapping[KT, VT]))
+UpdatesType = OrderedDictType[str, ColumnValueType]
 
 MySQLConnectionType = MySQLConnection
 PostgresConnectionType = PostgresConnection

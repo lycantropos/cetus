@@ -1,3 +1,5 @@
+from typing import Optional, Tuple, Any
+
 from cetus.types import (FiltersType,
                          FilterType)
 from cetus.utils import join_str
@@ -50,3 +52,12 @@ def predicate_to_str(
     else:
         value = normalize_value(value)
     return f'{column_name} {predicate_name} {value}'
+
+
+def add_filters(query: str, *,
+                filters: Optional[Tuple[str, Any]]
+                ) -> str:
+    if filters:
+        filters = filters_to_str(filters)
+        query += f'WHERE {filters} '
+    return query

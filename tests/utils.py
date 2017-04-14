@@ -1,20 +1,21 @@
 import logging
 import time
+from collections import OrderedDict
 from contextlib import (closing,
                         contextmanager)
-from typing import (List,
-                    Dict)
+from typing import List
 
-from sqlalchemy.schema import Table
+from cetus.types import (RecordType,
+                         ColumnValueType,
+                         OrderedDictType)
 from sqlalchemy.engine import create_engine
 from sqlalchemy.engine.url import URL
 from sqlalchemy.exc import OperationalError
-
-from cetus.types import (RecordType,
-                         ColumnValueType)
+from sqlalchemy.schema import Table
 
 
-def fetch(*, table: Table,
+def fetch(*,
+          table: Table,
           db_uri: URL) -> List[RecordType]:
     with get_engine(db_uri=db_uri) as engine:
         with closing(engine.execute(table.select())) as result_proxy:
@@ -22,7 +23,7 @@ def fetch(*, table: Table,
 
 
 def insert(*,
-           records_dicts: List[Dict[str, ColumnValueType]],
+           records_dicts: List[OrderedDictType[str, ColumnValueType]],
            table: Table,
            db_uri: URL) -> None:
     if not records_dicts:
@@ -31,12 +32,20 @@ def insert(*,
         engine.execute(table.insert().values(records_dicts))
 
 
-def records_to_dicts(*, records: List[RecordType],
+def records_to_dicts(*,
+                     records: List[RecordType],
                      table: Table
-                     ) -> List[Dict[str, ColumnValueType]]:
+                     ) -> List[OrderedDictType[str, ColumnValueType]]:
     columns_names = [column.name for column in table.columns]
-    return [dict(zip(columns_names, table_record))
+    return [OrderedDict(zip(columns_names, table_record))
             for table_record in records]
+
+
+def is_sub_dictionary(*,
+                      sub_dictionary: dict,
+                      super_dictionary: dict) -> bool:
+    return all(item in super_dictionary.items()
+               for item in sub_dictionary.items())
 
 
 @contextmanager
@@ -48,7 +57,8 @@ def get_engine(db_uri: URL):
         engine.dispose()
 
 
-def check_connection(db_uri: URL, *,
+def check_connection(db_uri: URL,
+                     *,
                      retry_attempts: int = 10,
                      retry_interval: int = 2
                      ) -> None:
