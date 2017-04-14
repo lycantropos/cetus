@@ -19,6 +19,15 @@ PREDICATES = (INCLUSION_OPERATORS
               | COMPARISON_OPERATORS)
 
 
+def add_filters(query: str, *,
+                filters: Optional[Tuple[str, Any]]
+                ) -> str:
+    if filters:
+        filters = filters_to_str(filters)
+        query += f'WHERE {filters} '
+    return query
+
+
 def filters_to_str(filters: FiltersType) -> str:
     operator, filter_ = filters
     if operator in LOGICAL_OPERATORS:
@@ -52,12 +61,3 @@ def predicate_to_str(
     else:
         value = normalize_value(value)
     return f'{column_name} {predicate_name} {value}'
-
-
-def add_filters(query: str, *,
-                filters: Optional[Tuple[str, Any]]
-                ) -> str:
-    if filters:
-        filters = filters_to_str(filters)
-        query += f'WHERE {filters} '
-    return query

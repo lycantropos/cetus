@@ -56,7 +56,7 @@ def add_updates(query: str, *,
 def normalize_value(value: ColumnValueType
                     ) -> str:
     if isinstance(value, (str, datetime)):
-        return f'\'{value}\''
+        return f"'{value}'"
     if value is None:
         return NULL_VALUE
     return str(value)
