@@ -6,6 +6,7 @@ from .reading import (fetch,
                       fetch_max_connections,
                       fetch_records_count,
                       fetch_max_column_value,
+                      fetch_min_column_value,
                       group_wise_fetch,
                       group_wise_fetch_records_count,
                       group_wise_fetch_max_column_value)

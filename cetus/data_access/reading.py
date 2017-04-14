@@ -28,7 +28,7 @@ async def fetch_column_function(
         orderings: Optional[List[OrderingType]] = None,
         is_mysql: bool,
         connection: ConnectionType,
-        default: ColumnValueType) -> int:
+        default: ColumnValueType = None) -> int:
     column_alias = f'{column_function_name}_1'
     function_column = (f'{column_function_name}({column_name}) '
                        f'AS {column_alias}')
@@ -37,15 +37,16 @@ async def fetch_column_function(
         columns_names=[function_column],
         filters=filters,
         orderings=orderings)
-    resp = await fetch_row(query,
+    res, = await fetch_row(query,
                            is_mysql=is_mysql,
                            connection=connection)
-    return resp[0] if resp is not None else default
+    return res if res is not None else default
 
 
 fetch_max_column_value = partial(fetch_column_function,
-                                 column_function_name='MAX',
-                                 default=None)
+                                 column_function_name='MAX')
+fetch_min_column_value = partial(fetch_column_function,
+                                 column_function_name='MIN')
 fetch_records_count = partial(fetch_column_function,
                               column_function_name='COUNT',
                               column_name=ALL_COLUMNS_ALIAS,
