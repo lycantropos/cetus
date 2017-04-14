@@ -1,13 +1,9 @@
 from typing import (Optional,
                     List)
 
-from cetus.types import (FiltersType,
-                         UpdatesType)
 from cetus.utils import join_str
 
-from .utils import (add_updates,
-                    check_query_parameters)
-from cetus.queries.filters import add_filters
+from .utils import (check_query_parameters)
 
 # does nothing, added for symmetry with `asyncpg` version
 aiomysql_label_template = '%s'.format
@@ -113,17 +109,3 @@ def generate_postgres_insert_returning_query(
     returning_columns = join_str(returning_columns_names)
     res += f'RETURNING {returning_columns}'
     return res
-
-
-def generate_update_query(
-        *,
-        table_name: str,
-        updates: UpdatesType,
-        filters: Optional[FiltersType] = None,
-        is_mysql: bool) -> str:
-    query = f'UPDATE {table_name} '
-    query = add_updates(query,
-                        updates=updates)
-    query = add_filters(query,
-                        filters=filters)
-    return query

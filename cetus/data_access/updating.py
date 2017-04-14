@@ -18,8 +18,7 @@ async def update(
     query = generate_update_query(
         table_name=table_name,
         updates=updates,
-        filters=filters,
-        is_mysql=is_mysql)
+        filters=filters)
 
     await execute(query,
                   is_mysql=is_mysql,
